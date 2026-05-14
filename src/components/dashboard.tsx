@@ -3,7 +3,12 @@ import { CalendarDays, CirclePlus, Filter, Tags } from "lucide-react";
 import { createCategory, createTag, createTransaction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
-import type { CategoryOption, TagOption, TransactionRow } from "@/lib/dashboard";
+import type {
+  CategoryOption,
+  TagOption,
+  TransactionRow,
+} from "@/lib/dashboard";
+import LogoutButton from "./Auth/logout-button";
 
 type DashboardProps = {
   user: {
@@ -40,8 +45,12 @@ export function Dashboard({
   filters,
   signOut,
 }: DashboardProps) {
-  const incomeCategories = categories.filter((category) => category.type === "income");
-  const expenseCategories = categories.filter((category) => category.type === "expense");
+  const incomeCategories = categories.filter(
+    (category) => category.type === "income",
+  );
+  const expenseCategories = categories.filter(
+    (category) => category.type === "expense",
+  );
 
   return (
     <main className="min-h-screen bg-muted/30">
@@ -60,8 +69,12 @@ export function Dashboard({
               </div>
             )}
             <div>
-              <p className="text-sm text-muted-foreground">BDT transaction tracker</p>
-              <h1 className="text-2xl font-semibold tracking-normal">{user.name}</h1>
+              <p className="text-sm text-muted-foreground">
+                BDT transaction tracker
+              </p>
+              <h1 className="text-2xl font-semibold tracking-normal">
+                {user.name}
+              </h1>
               <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </div>
@@ -69,9 +82,21 @@ export function Dashboard({
         </header>
 
         <section className="grid gap-3 md:grid-cols-3">
-          <SummaryTile label="Income" value={formatBDT(summary.income)} tone="income" />
-          <SummaryTile label="Cost" value={formatBDT(summary.expense)} tone="expense" />
-          <SummaryTile label="Balance" value={formatBDT(summary.balance)} tone="balance" />
+          <SummaryTile
+            label="Income"
+            value={formatBDT(summary.income)}
+            tone="income"
+          />
+          <SummaryTile
+            label="Cost"
+            value={formatBDT(summary.expense)}
+            tone="expense"
+          />
+          <SummaryTile
+            label="Balance"
+            value={formatBDT(summary.balance)}
+            tone="balance"
+          />
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -169,7 +194,8 @@ function FilterPanel({
             <option value="">All categories</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
-                {category.type === "income" ? "Income" : "Expense"} / {category.name}
+                {category.type === "income" ? "Income" : "Expense"} /{" "}
+                {category.name}
               </option>
             ))}
           </select>
@@ -206,14 +232,21 @@ function TransactionForm({
   tags: TagOption[];
 }) {
   return (
-    <form action={createTransaction} className="rounded-lg border bg-background p-4">
+    <form
+      action={createTransaction}
+      className="rounded-lg border bg-background p-4"
+    >
       <div className="mb-4 flex items-center gap-2">
         <CirclePlus className="size-4" />
         <h2 className="font-semibold">Add transaction</h2>
       </div>
       <div className="grid gap-3">
         <Field label="Type">
-          <select name="type" required className="h-9 w-full rounded-md border bg-background px-3 text-sm">
+          <select
+            name="type"
+            required
+            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          >
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
@@ -291,7 +324,13 @@ function TransactionForm({
   );
 }
 
-function ManageLists({ categories, tags }: { categories: CategoryOption[]; tags: TagOption[] }) {
+function ManageLists({
+  categories,
+  tags,
+}: {
+  categories: CategoryOption[];
+  tags: TagOption[];
+}) {
   return (
     <section className="rounded-lg border bg-background p-4">
       <div className="mb-4 flex items-center gap-2">
@@ -308,7 +347,10 @@ function ManageLists({ categories, tags }: { categories: CategoryOption[]; tags:
           />
         </Field>
         <div className="grid grid-cols-[1fr_88px] gap-2">
-          <select name="type" className="h-9 rounded-md border bg-background px-3 text-sm">
+          <select
+            name="type"
+            className="h-9 rounded-md border bg-background px-3 text-sm"
+          >
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
@@ -392,15 +434,22 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
                     style={{ backgroundColor: transaction.categoryColor }}
                   />
                   <h3 className="font-medium">{transaction.categoryName}</h3>
-                  <span className="text-sm text-muted-foreground">{transaction.date}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {transaction.date}
+                  </span>
                 </div>
                 {transaction.note ? (
-                  <p className="mt-1 text-sm text-muted-foreground">{transaction.note}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {transaction.note}
+                  </p>
                 ) : null}
                 {transaction.tagNames.length ? (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {transaction.tagNames.map((tag) => (
-                      <span key={tag} className="rounded-md bg-muted px-2 py-0.5 text-xs">
+                      <span
+                        key={tag}
+                        className="rounded-md bg-muted px-2 py-0.5 text-xs"
+                      >
                         {tag}
                       </span>
                     ))}
@@ -420,14 +469,22 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
             </article>
           ))
         ) : (
-          <p className="p-6 text-sm text-muted-foreground">No transactions match this view.</p>
+          <p className="p-6 text-sm text-muted-foreground">
+            No transactions match this view.
+          </p>
         )}
       </div>
     </section>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="grid gap-1.5 text-sm">
       <span className="font-medium">{label}</span>

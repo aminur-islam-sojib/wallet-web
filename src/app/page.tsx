@@ -2,6 +2,7 @@ import { Dashboard } from "@/components/dashboard";
 import { SignOutButton } from "@/components/auth-buttons";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData, type DashboardFilters } from "@/lib/dashboard";
+import LogoutButton from "@/components/Auth/logout-button";
 
 type HomeProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -39,7 +40,7 @@ export default async function Home({ searchParams }: HomeProps) {
         categoryId: filters.categoryId,
         tagId: filters.tagId,
       }}
-      signOut={<SignOutButton />}
+      signOut={<LogoutButton />}
     />
   );
 }
