@@ -1,5 +1,4 @@
 import { Dashboard } from "@/components/dashboard";
-import { SignOutButton } from "@/components/auth-buttons";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData, type DashboardFilters } from "@/lib/dashboard";
 import LogoutButton from "@/components/Auth/logout-button";
