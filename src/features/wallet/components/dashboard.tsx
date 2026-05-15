@@ -40,7 +40,7 @@ export function Dashboard({
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4  sm:px-6 lg:px-8">
-        <section className="grid gap-3 md:grid-cols-3">
+        <section className="grid gap-3 md:grid-cols-3 py-0 md:py-6">
           <SummaryTile
             label="Income"
             value={formatBDT(summary.income)}
