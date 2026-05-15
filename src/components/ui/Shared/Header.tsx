@@ -4,6 +4,7 @@ import MasterDialoge from "@/components/Dashboard/MasterDialog";
 import TransactionForm from "@/components/Dashboard/transaction-form";
 import { DashboardFilters, getDashboardData } from "@/lib/dashboard";
 import BottomDrawer from "./BottomDrawer";
+import { Separator } from "../separator";
 
 function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -37,32 +38,35 @@ export default async function Header({ searchParams }: HeaderProps) {
     (category) => category.type === "expense",
   );
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <div className="flex gap-3">
-        <DrawerRight user={safeUser} />
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Command Center
-          </p>
-          <h1 className="text-lg font-semibold tracking-normal">
-            Wallet + Health
-          </h1>
+    <div className="">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="flex gap-3">
+          <DrawerRight user={safeUser} />
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              Command Center
+            </p>
+            <h1 className="text-lg font-semibold tracking-normal">
+              Wallet + Health
+            </h1>
+          </div>
         </div>
+        <div className="hidden gap-2 sm:flex">
+          <MasterDialoge>
+            <TransactionForm
+              incomeCategories={incomeCategories}
+              expenseCategories={expenseCategories}
+              tags={data.tags}
+            />
+          </MasterDialoge>
+        </div>
+        <BottomDrawer
+          incomeCategories={incomeCategories}
+          expenseCategories={expenseCategories}
+          tags={data.tags}
+        />
       </div>
-      <div className="hidden gap-2 sm:flex">
-        <MasterDialoge>
-          <TransactionForm
-            incomeCategories={incomeCategories}
-            expenseCategories={expenseCategories}
-            tags={data.tags}
-          />
-        </MasterDialoge>
-      </div>
-      <BottomDrawer
-        incomeCategories={incomeCategories}
-        expenseCategories={expenseCategories}
-        tags={data.tags}
-      />
+      <Separator />
     </div>
   );
 }

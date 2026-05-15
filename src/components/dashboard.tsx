@@ -43,31 +43,6 @@ export function Dashboard({
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-4 border-b bg-background/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            {user.image ? (
-              <div
-                aria-hidden="true"
-                className="size-11 rounded-lg border bg-muted bg-cover bg-center"
-                style={{ backgroundImage: `url(${user.image})` }}
-              />
-            ) : (
-              <div className="grid size-11 place-items-center rounded-lg bg-primary text-primary-foreground">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div>
-              <p className="text-sm text-muted-foreground">
-                BDT transaction tracker
-              </p>
-              <h1 className="text-2xl font-semibold tracking-normal">
-                {user.name}
-              </h1>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
-            </div>
-          </div>
-        </header>
-
         <section className="grid gap-3 md:grid-cols-3">
           <SummaryTile
             label="Income"
