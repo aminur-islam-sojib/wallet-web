@@ -179,7 +179,7 @@ const Modal: React.FC<ModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-auto"
+          className="fixed inset-0 z-9999 flex items-center justify-center pointer-events-auto"
           initial="hidden"
           animate="visible"
           exit="exit"
