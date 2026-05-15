@@ -100,9 +100,9 @@ const DrawerContent = React.forwardRef<
   const { onOpenChange, side } = useDrawerContext();
 
   const sideClasses: Record<DrawerSide, string> = {
-    top: "inset-x-0 top-0 w-full h-auto max-h-[80vh] border-b border-gray-200 dark:border-gray-800 items-center",
+    top: "inset-x-0 top-0 w-full h-auto max-h-[80vh] border-b border-gray-200 dark:border-gray-800",
     bottom:
-      "inset-x-0 bottom-0 w-full h-auto max-h-[80vh] border-t border-gray-200 dark:border-gray-800 items-center",
+      "inset-x-0 bottom-0 w-full h-auto max-h-[80vh] border-t border-gray-200 dark:border-gray-800 p-4",
     left: "inset-y-0 left-0 h-full w-80 max-w-[90vw] border-r border-gray-200 dark:border-gray-800 justify-center",
     right:
       "inset-y-0 right-0 h-full w-80 max-w-[90vw] border-l border-gray-200 dark:border-gray-800 justify-center",

@@ -1,6 +1,6 @@
 import { CalendarDays, CirclePlus, Filter, Tags } from "lucide-react";
 
-import { createCategory, createTag, createTransaction } from "@/app/actions";
+import { createCategory, createTag } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
 import type {
@@ -30,8 +30,6 @@ type DashboardProps = {
     tagId?: string;
   };
 };
-
-const today = new Date().toISOString().slice(0, 10);
 
 export function Dashboard({
   user,
@@ -201,108 +199,6 @@ function FilterPanel({
       </div>
       <Button type="submit" className="mt-4">
         Apply filters
-      </Button>
-    </form>
-  );
-}
-
-export function TransactionForm({
-  incomeCategories,
-  expenseCategories,
-  tags,
-}: {
-  incomeCategories: CategoryOption[];
-  expenseCategories: CategoryOption[];
-  tags: TagOption[];
-}) {
-  return (
-    <form
-      action={createTransaction}
-      className="rounded-lg border bg-background p-4"
-    >
-      <div className="mb-4 flex items-center gap-2">
-        <CirclePlus className="size-4" />
-        <h2 className="font-semibold">Add transaction</h2>
-      </div>
-      <div className="grid gap-3">
-        <Field label="Type">
-          <select
-            name="type"
-            required
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </select>
-        </Field>
-        <Field label="Amount">
-          <input
-            name="amount"
-            inputMode="decimal"
-            placeholder="1200.00"
-            required
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          />
-        </Field>
-        <Field label="Date">
-          <input
-            type="date"
-            name="date"
-            defaultValue={today}
-            required
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          />
-        </Field>
-        <Field label="Category">
-          <select
-            name="categoryId"
-            required
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          >
-            <optgroup label="Expense">
-              {expenseCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Income">
-              {incomeCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-          <p className="text-xs text-muted-foreground">
-            Pick a category that matches the selected type.
-          </p>
-        </Field>
-        <Field label="Tags">
-          <select
-            name="tagIds"
-            multiple
-            className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm"
-          >
-            {tags.map((tag) => (
-              <option key={tag.id} value={tag.id}>
-                {tag.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Note">
-          <textarea
-            name="note"
-            maxLength={240}
-            rows={3}
-            className="w-full resize-none rounded-md border bg-background px-3 py-2 text-sm"
-            placeholder="Optional"
-          />
-        </Field>
-      </div>
-      <Button type="submit" className="mt-4 w-full">
-        Save transaction
       </Button>
     </form>
   );

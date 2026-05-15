@@ -1,8 +1,9 @@
 import { requireUser } from "@/lib/auth";
 import DrawerRight from "./Drawer";
 import MasterDialoge from "@/components/Dashboard/MasterDialog";
-import { TransactionForm } from "@/components/dashboard";
+import TransactionForm from "@/components/Dashboard/transaction-form";
 import { DashboardFilters, getDashboardData } from "@/lib/dashboard";
+import BottomDrawer from "./BottomDrawer";
 
 function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -48,7 +49,7 @@ export default async function Header({ searchParams }: HeaderProps) {
           </h1>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="hidden gap-2 sm:flex">
         <MasterDialoge>
           <TransactionForm
             incomeCategories={incomeCategories}
@@ -57,6 +58,11 @@ export default async function Header({ searchParams }: HeaderProps) {
           />
         </MasterDialoge>
       </div>
+      <BottomDrawer
+        incomeCategories={incomeCategories}
+        expenseCategories={expenseCategories}
+        tags={data.tags}
+      />
     </div>
   );
 }
