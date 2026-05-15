@@ -2,14 +2,6 @@ import { CalendarDays, CirclePlus, Filter, Tags } from "lucide-react";
 
 import { createCategory, createTag, createTransaction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { formatBDT } from "@/lib/money";
 import type {
   CategoryOption,
@@ -17,6 +9,7 @@ import type {
   TransactionRow,
 } from "@/lib/dashboard";
 import LogoutButton from "./Auth/logout-button";
+import AddTransactionButton from "./Dashboard/MasterDialog";
 
 type DashboardProps = {
   user: {
@@ -89,25 +82,14 @@ export function Dashboard({
 
           <div className=" flex gap-2">
             {signOut}
-            <div className=" flex gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full">Add transaction</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle>Add transaction</DialogTitle>
-                    <DialogDescription>
-                      Log income or expense with category, tags, and notes.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <TransactionForm
-                    incomeCategories={incomeCategories}
-                    expenseCategories={expenseCategories}
-                    tags={tags}
-                  />
-                </DialogContent>
-              </Dialog>
+            <div className="flex gap-2">
+              <AddTransactionButton>
+                <TransactionForm
+                  incomeCategories={incomeCategories}
+                  expenseCategories={expenseCategories}
+                  tags={tags}
+                />
+              </AddTransactionButton>
             </div>
           </div>
         </header>
