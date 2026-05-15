@@ -1,3 +1,4 @@
+import DrawerRight from "@/components/ui/Shared/Drawer";
 import { requireUser } from "@/lib/auth";
 
 export default async function HealthPage() {

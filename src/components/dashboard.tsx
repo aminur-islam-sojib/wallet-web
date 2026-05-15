@@ -8,7 +8,6 @@ import type {
   TagOption,
   TransactionRow,
 } from "@/lib/dashboard";
-import AddTransactionButton from "./Dashboard/MasterDialog";
 
 type DashboardProps = {
   user: {
@@ -30,7 +29,6 @@ type DashboardProps = {
     categoryId?: string;
     tagId?: string;
   };
-  signOut: React.ReactNode;
 };
 
 const today = new Date().toISOString().slice(0, 10);
@@ -43,15 +41,7 @@ export function Dashboard({
   tags,
   transactions,
   filters,
-  signOut,
 }: DashboardProps) {
-  const incomeCategories = categories.filter(
-    (category) => category.type === "income",
-  );
-  const expenseCategories = categories.filter(
-    (category) => category.type === "expense",
-  );
-
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
@@ -76,19 +66,6 @@ export function Dashboard({
                 {user.name}
               </h1>
               <p className="text-sm text-muted-foreground">{user.email}</p>
-            </div>
-          </div>
-
-          <div className=" flex gap-2">
-            {signOut}
-            <div className="flex gap-2">
-              <AddTransactionButton>
-                <TransactionForm
-                  incomeCategories={incomeCategories}
-                  expenseCategories={expenseCategories}
-                  tags={tags}
-                />
-              </AddTransactionButton>
             </div>
           </div>
         </header>
@@ -229,7 +206,7 @@ function FilterPanel({
   );
 }
 
-function TransactionForm({
+export function TransactionForm({
   incomeCategories,
   expenseCategories,
   tags,

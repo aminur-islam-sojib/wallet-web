@@ -1,5 +1,4 @@
 import { Dashboard } from "@/components/dashboard";
-import LogoutButton from "@/components/Auth/logout-button";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData, type DashboardFilters } from "@/lib/dashboard";
 
@@ -41,7 +40,6 @@ export default async function DashboardPage({
         categoryId: filters.categoryId,
         tagId: filters.tagId,
       }}
-      signOut={<LogoutButton />}
     />
   );
 }
