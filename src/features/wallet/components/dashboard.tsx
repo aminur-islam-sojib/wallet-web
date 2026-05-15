@@ -1,6 +1,8 @@
-import { CalendarDays, Filter, Tags } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CalendarDays, Filter, Tags } from "lucide-react";
 
 import { createCategory, createTag } from "@/features/wallet/server/actions";
+import TransactionEditDrawer from "@/features/wallet/components/transaction-edit-drawer";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
 import type { CategoryOption, TagOption, TransactionRow } from "@/types/wallet";
@@ -28,7 +30,6 @@ type DashboardProps = {
 };
 
 export function Dashboard({
-  user,
   selectedMonth,
   summary,
   categories,
@@ -38,7 +39,7 @@ export function Dashboard({
 }: DashboardProps) {
   return (
     <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4  sm:px-6 lg:px-8">
         <section className="grid gap-3 md:grid-cols-3">
           <SummaryTile
             label="Income"
@@ -59,13 +60,17 @@ export function Dashboard({
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="flex flex-col gap-6">
-            <FilterPanel
+            {/* <FilterPanel
               selectedMonth={selectedMonth}
               categories={categories}
               tags={tags}
               filters={filters}
+            /> */}
+            <TransactionList
+              transactions={transactions}
+              categories={categories}
+              tags={tags}
             />
-            <TransactionList transactions={transactions} />
           </div>
 
           <aside className="flex flex-col gap-6">
@@ -264,7 +269,18 @@ function ManageLists({
   );
 }
 
-function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
+function TransactionList({
+  transactions,
+  categories,
+  tags,
+}: {
+  transactions: TransactionRow[];
+  categories: CategoryOption[];
+  tags: TagOption[];
+}) {
+  const visibleTransactions = transactions.slice(0, 5);
+  const hasMoreTransactions = transactions.length > visibleTransactions.length;
+
   return (
     <section className="rounded-lg border bg-background">
       <div className="flex items-center gap-2 border-b p-4">
@@ -272,8 +288,8 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
         <h2 className="font-semibold">Recent transactions</h2>
       </div>
       <div className="divide-y">
-        {transactions.length ? (
-          transactions.map((transaction) => (
+        {visibleTransactions.length ? (
+          visibleTransactions.map((transaction) => (
             <article
               key={transaction.id}
               className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center"
@@ -294,7 +310,9 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
                     {transaction.note}
                   </p>
                 ) : null}
-                {transaction.place || transaction.paymentMethod || transaction.attachment ? (
+                {transaction.place ||
+                transaction.paymentMethod ||
+                transaction.attachment ? (
                   <div className="mt-2 flex flex-wrap gap-1 text-xs text-muted-foreground">
                     {transaction.paymentMethod ? (
                       <span className="rounded-md bg-muted px-2 py-0.5">
@@ -326,16 +344,23 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
                   </div>
                 ) : null}
               </div>
-              <p
-                className={
-                  transaction.type === "income"
-                    ? "font-semibold text-emerald-700"
-                    : "font-semibold text-rose-700"
-                }
-              >
-                {transaction.type === "income" ? "+" : "-"}
-                {formatBDT(transaction.amountPaisa)}
-              </p>
+              <div className="flex items-center justify-between gap-3 sm:justify-end">
+                <p
+                  className={
+                    transaction.type === "income"
+                      ? "font-semibold text-emerald-700"
+                      : "font-semibold text-rose-700"
+                  }
+                >
+                  {transaction.type === "income" ? "+" : "-"}
+                  {formatBDT(transaction.amountPaisa)}
+                </p>
+                <TransactionEditDrawer
+                  transaction={transaction}
+                  categories={categories}
+                  tags={tags}
+                />
+              </div>
             </article>
           ))
         ) : (
@@ -344,6 +369,16 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
           </p>
         )}
       </div>
+      {hasMoreTransactions ? (
+        <div className="border-t p-4">
+          <Button asChild variant="outline" className="min-h-11 w-full">
+            <Link href="/wallet/transactions">
+              See more
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
+      ) : null}
     </section>
   );
 }

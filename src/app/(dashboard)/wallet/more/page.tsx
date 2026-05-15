@@ -1,28 +1,34 @@
 import { requireUser } from "@/lib/auth";
+import { Category } from "@/models/category";
+import { Tag } from "@/models/tag";
+import WalletMoreManager from "@/features/wallet/components/wallet-more-manager";
+import type { CategoryOption, TagOption } from "@/types/wallet";
 
 export default async function WalletMorePage() {
-  await requireUser();
+  const user = await requireUser();
+  const [categories, tags] = await Promise.all([
+    Category.find({ userId: user._id }).sort({ type: 1, name: 1 }).lean(),
+    Tag.find({ userId: user._id }).sort({ name: 1 }).lean(),
+  ]);
+
+  const categoryOptions: CategoryOption[] = categories.map((category) => ({
+    id: category._id.toString(),
+    name: category.name,
+    type: category.type as "income" | "expense",
+    color: category.color,
+    icon: category.icon,
+    isDefault: category.isDefault,
+  }));
+
+  const tagOptions: TagOption[] = tags.map((tag) => ({
+    id: tag._id.toString(),
+    name: tag.name,
+  }));
 
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border bg-background p-6 shadow-sm">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            Wallet
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-normal">More</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Manage wallet preferences, exports, and integrations.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-              Export data (coming soon)
-            </div>
-            <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-              Connected accounts (coming soon)
-            </div>
-          </div>
-        </div>
+        <WalletMoreManager categories={categoryOptions} tags={tagOptions} />
       </div>
     </main>
   );

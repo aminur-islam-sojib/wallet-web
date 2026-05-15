@@ -107,8 +107,10 @@ export async function getDashboardData(
         type: transaction.type as "income" | "expense",
         amountPaisa: transaction.amountPaisa,
         date: transaction.date.toISOString().slice(0, 10),
+        categoryId: transaction.categoryId.toString(),
         categoryName: category?.name ?? "Uncategorized",
         categoryColor: category?.color ?? "#64748b",
+        tagIds: transaction.tagIds.map((tagId) => tagId.toString()),
         tagNames: transaction.tagIds
           .map((tagId) => tagById.get(tagId.toString())?.name)
           .filter((name): name is string => Boolean(name)),

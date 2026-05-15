@@ -564,7 +564,7 @@ function DetailsDrawer({
       />
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-70 flex w-[88vw] max-w-sm flex-col border-l bg-background shadow-2xl transition-transform duration-300",
+          "fixed inset-y-0 right-0 z-70 flex w-[88vw] max-w-sm flex-col border-l bg-background transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full",
         )}
         aria-hidden={!open}

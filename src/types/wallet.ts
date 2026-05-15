@@ -34,8 +34,10 @@ export type TransactionRow = {
   type: TransactionType;
   amountPaisa: number;
   date: string;
+  categoryId: string;
   categoryName: string;
   categoryColor: string;
+  tagIds: string[];
   tagNames: string[];
   note: string;
   paymentMethod?: PaymentMethod;
