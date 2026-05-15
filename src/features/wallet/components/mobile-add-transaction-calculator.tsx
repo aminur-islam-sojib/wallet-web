@@ -63,6 +63,10 @@ export default function MobileAddTransactionCalculator({
   const [categoryId, setCategoryId] = useState(
     expenseCategories[0]?.id ?? incomeCategories[0]?.id ?? "",
   );
+  const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
+  const [recentCategoryIds, setRecentCategoryIds] = useState<
+    Record<TransactionType, string[]>
+  >({ expense: [], income: [] });
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [note, setNote] = useState("");
   const [date, setDate] = useState(today);
@@ -74,6 +78,10 @@ export default function MobileAddTransactionCalculator({
   const [isSaving, setIsSaving] = useState(false);
 
   const categories = type === "income" ? incomeCategories : expenseCategories;
+  const selectedCategory = useMemo(
+    () => categories.find((category) => category.id === categoryId),
+    [categories, categoryId],
+  );
   const evaluated = useMemo(() => evaluateExpression(expression), [expression]);
   const amount = result ?? evaluated.value;
   const canSave = Boolean(
@@ -83,9 +91,27 @@ export default function MobileAddTransactionCalculator({
   function selectType(nextType: TransactionType) {
     const nextCategories =
       nextType === "income" ? incomeCategories : expenseCategories;
+    const recentForType = recentCategoryIds[nextType] ?? [];
+    const recentMatch = recentForType.find((id) =>
+      nextCategories.some((category) => category.id === id),
+    );
+    const nextCategoryId = recentMatch ?? nextCategories[0]?.id ?? "";
 
     setType(nextType);
-    setCategoryId(nextCategories[0]?.id ?? "");
+    setCategoryId(nextCategoryId);
+  }
+
+  function selectCategory(nextCategoryId: string) {
+    setCategoryId(nextCategoryId);
+    setRecentCategoryIds((current) => {
+      const updated = [
+        nextCategoryId,
+        ...current[type].filter((id) => id !== nextCategoryId),
+      ].slice(0, 4);
+
+      return { ...current, [type]: updated };
+    });
+    setCategoryDrawerOpen(false);
   }
 
   function press(value: string) {
@@ -233,32 +259,34 @@ export default function MobileAddTransactionCalculator({
               Details
             </Button>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {categories.length ? (
-              categories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => setCategoryId(category.id)}
-                  className={cn(
-                    "flex min-h-11 shrink-0 items-center gap-2 rounded-lg border px-3 text-base",
-                    categoryId === category.id
-                      ? "border-foreground bg-foreground text-background"
-                      : "bg-background text-foreground",
-                  )}
-                >
+          <div className="grid gap-1">
+            {selectedCategory ? (
+              <button
+                type="button"
+                onClick={() => setCategoryDrawerOpen(true)}
+                className="flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-base"
+                aria-label="Change category"
+              >
+                <span className="flex items-center gap-2">
                   <span
                     className="size-3 rounded-full"
-                    style={{ backgroundColor: category.color }}
+                    style={{ backgroundColor: selectedCategory.color }}
                   />
-                  {category.name}
-                </button>
-              ))
+                  {selectedCategory.name}
+                </span>
+                <ChevronRight className="size-4 text-muted-foreground" />
+              </button>
             ) : (
-              <p className="min-h-11 rounded-lg border px-3 py-3 text-sm text-muted-foreground">
-                Add a {type} category first.
-              </p>
+              <button
+                type="button"
+                disabled
+                className="flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-base text-muted-foreground"
+                aria-label="No categories available"
+              >
+                Add a category first
+              </button>
             )}
+            <p className="text-xs text-muted-foreground">Tap to change.</p>
           </div>
         </section>
 
@@ -268,6 +296,16 @@ export default function MobileAddTransactionCalculator({
           onPress={press}
         />
       </div>
+
+      <CategoryDrawer
+        open={categoryDrawerOpen}
+        onClose={() => setCategoryDrawerOpen(false)}
+        title="Select category"
+        categories={categories}
+        recentIds={recentCategoryIds[type]}
+        selectedCategoryId={categoryId}
+        onSelect={selectCategory}
+      />
 
       <DetailsDrawer
         open={detailsOpen}
@@ -287,6 +325,134 @@ export default function MobileAddTransactionCalculator({
         onAttachmentChange={setAttachment}
       />
     </form>
+  );
+}
+
+function CategoryDrawer({
+  open,
+  onClose,
+  title,
+  categories,
+  recentIds,
+  selectedCategoryId,
+  onSelect,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  categories: CategoryOption[];
+  recentIds: string[];
+  selectedCategoryId: string;
+  onSelect: (categoryId: string) => void;
+}) {
+  const recentCategories = recentIds
+    .map((id) => categories.find((category) => category.id === id))
+    .filter((category): category is CategoryOption => Boolean(category));
+
+  return (
+    <>
+      <div
+        className={cn(
+          "fixed inset-0 z-80 bg-black/40 transition-opacity",
+          open ? "opacity-100" : "pointer-events-none opacity-0",
+        )}
+        onClick={onClose}
+      />
+      <aside
+        className={cn(
+          "fixed inset-0 z-90 flex flex-col bg-background transition-transform duration-300",
+          open ? "translate-y-0" : "translate-y-full",
+        )}
+        aria-hidden={!open}
+      >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-4 py-4">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex size-11 items-center justify-center rounded-lg border"
+            aria-label="Close category drawer"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-6 pt-4">
+          <section className="grid gap-2">
+            <p className="text-sm font-semibold text-muted-foreground">
+              Recent
+            </p>
+            {recentCategories.length ? (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {recentCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => onSelect(category.id)}
+                    className={cn(
+                      "flex min-h-11 shrink-0 items-center gap-2 rounded-lg border px-3 text-base",
+                      selectedCategoryId === category.id
+                        ? "border-foreground bg-foreground text-background"
+                        : "bg-background text-foreground",
+                    )}
+                    aria-label={`Select ${category.name}`}
+                  >
+                    <span
+                      className="size-3 rounded-full"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                None selected yet.
+              </p>
+            )}
+          </section>
+
+          <section className="grid gap-2">
+            <p className="text-sm font-semibold text-muted-foreground">
+              All categories
+            </p>
+            {categories.length ? (
+              <div className="grid gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => onSelect(category.id)}
+                    className={cn(
+                      "flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border px-3 text-base",
+                      selectedCategoryId === category.id
+                        ? "border-foreground bg-foreground text-background"
+                        : "bg-background text-foreground",
+                    )}
+                    aria-label={`Select ${category.name}`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="size-3 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      {category.name}
+                    </span>
+                    {selectedCategoryId === category.id ? (
+                      <span className="text-xs font-semibold">Selected</span>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Add a category first.
+              </p>
+            )}
+          </section>
+        </div>
+      </aside>
+    </>
   );
 }
 
