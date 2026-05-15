@@ -75,7 +75,7 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "min-h-[44px] rounded-md border px-3 py-2 text-sm transition",
+                      "min-h-11 rounded-md border px-3 py-2 text-sm transition",
                       isActive
                         ? "border-foreground/30 bg-foreground text-background"
                         : "hover:bg-muted",
@@ -90,11 +90,11 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
               <div className="mt-4 grid gap-2">
                 <Link
                   href="/health"
-                  className="min-h-[44px] rounded-md border px-3 py-2 text-sm hover:bg-muted"
+                  className="min-h-11 rounded-md border px-3 py-2 text-sm hover:bg-muted"
                 >
                   Health tracker
                 </Link>
-                <div className="min-h-[44px] rounded-md border px-3 py-2 text-muted-foreground">
+                <div className="min-h-11 rounded-md border px-3 py-2 text-muted-foreground">
                   Settings (coming soon)
                 </div>
               </div>

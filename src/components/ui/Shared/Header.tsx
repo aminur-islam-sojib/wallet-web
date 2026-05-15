@@ -4,6 +4,7 @@ import MasterDialoge from "@/components/Dashboard/MasterDialog";
 import TransactionForm from "@/components/Dashboard/transaction-form";
 import { DashboardFilters, getDashboardData } from "@/lib/dashboard";
 import WalletBottomNav from "./WalletBottomNav";
+import WalletMobileHeader from "./WalletMobileHeader";
 import { Separator } from "../separator";
 
 function firstParam(value: string | string[] | undefined) {
@@ -15,6 +16,15 @@ type HeaderProps = {
 
 export default async function Header({ searchParams }: HeaderProps) {
   const user = await requireUser();
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const dateLabel = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(now);
   const params: Record<string, string | string[] | undefined> = searchParams
     ? await searchParams
     : {};
@@ -39,34 +49,41 @@ export default async function Header({ searchParams }: HeaderProps) {
   );
   return (
     <div className="">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div className="flex gap-3">
-          <DrawerRight user={safeUser} />
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              Command Center
-            </p>
-            <h1 className="text-lg font-semibold tracking-normal">
-              Wallet + Health
-            </h1>
+      <WalletMobileHeader
+        user={safeUser}
+        greeting={greeting}
+        dateLabel={dateLabel}
+      />
+      <div className="hidden sm:block">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div className="flex gap-3">
+            <DrawerRight user={safeUser} />
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                Command Center
+              </p>
+              <h1 className="text-lg font-semibold tracking-normal">
+                Wallet + Health
+              </h1>
+            </div>
+          </div>
+          <div className="hidden gap-2 sm:flex">
+            <MasterDialoge>
+              <TransactionForm
+                incomeCategories={incomeCategories}
+                expenseCategories={expenseCategories}
+                tags={data.tags}
+              />
+            </MasterDialoge>
           </div>
         </div>
-        <div className="hidden gap-2 sm:flex">
-          <MasterDialoge>
-            <TransactionForm
-              incomeCategories={incomeCategories}
-              expenseCategories={expenseCategories}
-              tags={data.tags}
-            />
-          </MasterDialoge>
-        </div>
-        <WalletBottomNav
-          incomeCategories={incomeCategories}
-          expenseCategories={expenseCategories}
-          tags={data.tags}
-        />
+        <Separator />
       </div>
-      <Separator />
+      <WalletBottomNav
+        incomeCategories={incomeCategories}
+        expenseCategories={expenseCategories}
+        tags={data.tags}
+      />
     </div>
   );
 }
