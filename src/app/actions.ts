@@ -14,6 +14,16 @@ const amountSchema = z
   .trim()
   .regex(/^\d+(\.\d{1,2})?$/, "Use a valid BDT amount.");
 
+const paymentMethodSchema = z.enum([
+  "cash",
+  "card",
+  "bank_transfer",
+  "bkash",
+  "nagad",
+  "rocket",
+  "other",
+]);
+
 const transactionSchema = z.object({
   type: z.enum(["income", "expense"]),
   amount: amountSchema,
@@ -21,6 +31,11 @@ const transactionSchema = z.object({
   categoryId: z.string().min(1),
   tagIds: z.array(z.string()).default([]),
   note: z.string().trim().max(240).optional(),
+  paymentMethod: paymentMethodSchema.optional(),
+  place: z.string().trim().max(120).optional(),
+  attachmentName: z.string().trim().max(180).optional(),
+  attachmentType: z.string().trim().max(120).optional(),
+  attachmentSize: z.coerce.number().int().nonnegative().optional(),
 });
 
 const categorySchema = z.object({
@@ -45,6 +60,11 @@ export async function createTransaction(formData: FormData) {
     categoryId: formData.get("categoryId"),
     tagIds: formData.getAll("tagIds"),
     note: formData.get("note") || undefined,
+    paymentMethod: formData.get("paymentMethod") || undefined,
+    place: formData.get("place") || undefined,
+    attachmentName: formData.get("attachmentName") || undefined,
+    attachmentType: formData.get("attachmentType") || undefined,
+    attachmentSize: formData.get("attachmentSize") || undefined,
   });
 
   const category = await Category.findOne({
@@ -71,9 +91,18 @@ export async function createTransaction(formData: FormData) {
     categoryId: category._id,
     tagIds: tags.map((tag) => tag._id),
     note: parsed.note,
+    paymentMethod: parsed.paymentMethod,
+    place: parsed.place,
+    attachment: parsed.attachmentName
+      ? {
+          name: parsed.attachmentName,
+          type: parsed.attachmentType ?? "",
+          size: parsed.attachmentSize ?? 0,
+        }
+      : undefined,
   });
 
-  revalidatePath("/dashboard");
+  revalidatePath("/wallet");
 }
 
 export async function createCategory(formData: FormData) {

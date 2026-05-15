@@ -6,8 +6,9 @@ import { Home, List, PieChart, MoreHorizontal, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import BottomDrawer from "@/features/wallet/components/bottom-drawer";
-import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/wallet-nav";
+
 import type { CategoryOption, TagOption } from "@/types/wallet";
+import { WALLET_NAV_ITEMS } from "../navigation/wallet-nav";
 
 const navItems = [
   { ...WALLET_NAV_ITEMS[0], Icon: Home },

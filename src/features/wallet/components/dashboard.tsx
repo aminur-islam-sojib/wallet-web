@@ -294,6 +294,25 @@ function TransactionList({ transactions }: { transactions: TransactionRow[] }) {
                     {transaction.note}
                   </p>
                 ) : null}
+                {transaction.place || transaction.paymentMethod || transaction.attachment ? (
+                  <div className="mt-2 flex flex-wrap gap-1 text-xs text-muted-foreground">
+                    {transaction.paymentMethod ? (
+                      <span className="rounded-md bg-muted px-2 py-0.5">
+                        {transaction.paymentMethod.replace("_", " ")}
+                      </span>
+                    ) : null}
+                    {transaction.place ? (
+                      <span className="rounded-md bg-muted px-2 py-0.5">
+                        {transaction.place}
+                      </span>
+                    ) : null}
+                    {transaction.attachment ? (
+                      <span className="rounded-md bg-muted px-2 py-0.5">
+                        {transaction.attachment.name}
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
                 {transaction.tagNames.length ? (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {transaction.tagNames.map((tag) => (

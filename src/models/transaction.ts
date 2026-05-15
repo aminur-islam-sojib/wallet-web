@@ -9,6 +9,16 @@ const transactionSchema = new Schema(
     categoryId: { type: Schema.Types.ObjectId, ref: "Category", required: true, index: true },
     tagIds: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
     note: { type: String, trim: true, maxlength: 240 },
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "card", "bank_transfer", "bkash", "nagad", "rocket", "other"],
+    },
+    place: { type: String, trim: true, maxlength: 120 },
+    attachment: {
+      name: { type: String, trim: true, maxlength: 180 },
+      type: { type: String, trim: true, maxlength: 120 },
+      size: { type: Number, min: 0 },
+    },
   },
   { timestamps: true }
 );

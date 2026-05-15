@@ -8,12 +8,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerDescription,
-  DrawerFooter,
   Button,
 } from "@/components/ui/Shared/Drawe";
 
 import type { CategoryOption, TagOption } from "@/types/wallet";
-import TransactionForm from "@/features/wallet/components/transaction-form";
+import MobileAddTransactionCalculator from "@/features/wallet/components/mobile-add-transaction-calculator";
 
 type BottomDrawerProps = {
   incomeCategories: CategoryOption[];
@@ -45,27 +44,20 @@ export default function BottomDrawer({
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="bottom">
         <DrawerOverlay />
-        <DrawerContent className="max-h-[90vh]">
-          <DrawerHeader>
+        <DrawerContent className="h-[calc(100dvh-32px)] max-h-[calc(100dvh-32px)] rounded-t-2xl p-0">
+          <DrawerHeader className="px-4 py-4 text-left">
             <DrawerTitle>Add transaction</DrawerTitle>
             <DrawerDescription>
-              Log income or expense on the go.
+              Enter an amount, pick a category, and save.
             </DrawerDescription>
           </DrawerHeader>
 
-          <div className="overflow-y-auto">
-            <TransactionForm
-              incomeCategories={incomeCategories}
-              expenseCategories={expenseCategories}
-              tags={tags}
-            />
-          </div>
-
-          <DrawerFooter className="gap-3">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Close
-            </Button>
-          </DrawerFooter>
+          <MobileAddTransactionCalculator
+            incomeCategories={incomeCategories}
+            expenseCategories={expenseCategories}
+            tags={tags}
+            onSaved={() => setIsOpen(false)}
+          />
         </DrawerContent>
       </Drawer>
     </>

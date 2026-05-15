@@ -113,6 +113,15 @@ export async function getDashboardData(
           .map((tagId) => tagById.get(tagId.toString())?.name)
           .filter((name): name is string => Boolean(name)),
         note: transaction.note ?? "",
+        paymentMethod: transaction.paymentMethod ?? undefined,
+        place: transaction.place ?? undefined,
+        attachment: transaction.attachment?.name
+          ? {
+              name: transaction.attachment.name,
+              type: transaction.attachment.type ?? "",
+              size: transaction.attachment.size ?? 0,
+            }
+          : undefined,
       };
     }),
   };
