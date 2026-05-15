@@ -26,7 +26,10 @@ const transactionSchema = z.object({
 const categorySchema = z.object({
   name: z.string().trim().min(1).max(40),
   type: z.enum(["income", "expense"]),
-  color: z.string().trim().regex(/^#[0-9a-fA-F]{6}$/),
+  color: z
+    .string()
+    .trim()
+    .regex(/^#[0-9a-fA-F]{6}$/),
 });
 
 const tagSchema = z.object({
@@ -55,7 +58,9 @@ export async function createTransaction(formData: FormData) {
   }
 
   const tags = parsed.tagIds.length
-    ? await Tag.find({ _id: { $in: parsed.tagIds }, userId: user._id }).select("_id")
+    ? await Tag.find({ _id: { $in: parsed.tagIds }, userId: user._id }).select(
+        "_id",
+      )
     : [];
 
   await Transaction.create({
@@ -68,7 +73,7 @@ export async function createTransaction(formData: FormData) {
     note: parsed.note,
   });
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function createCategory(formData: FormData) {
@@ -91,10 +96,10 @@ export async function createCategory(formData: FormData) {
         isDefault: false,
       },
     },
-    { upsert: true }
+    { upsert: true },
   );
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function createTag(formData: FormData) {
@@ -111,8 +116,8 @@ export async function createTag(formData: FormData) {
         name: parsed.name,
       },
     },
-    { upsert: true }
+    { upsert: true },
   );
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }

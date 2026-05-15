@@ -8,7 +8,6 @@ import type {
   TagOption,
   TransactionRow,
 } from "@/lib/dashboard";
-import LogoutButton from "./Auth/logout-button";
 import AddTransactionButton from "./Dashboard/MasterDialog";
 
 type DashboardProps = {
