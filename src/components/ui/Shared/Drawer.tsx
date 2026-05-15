@@ -58,7 +58,7 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
 
             <div className="grid gap-2 text-sm">
               <Link
-                href="/dashboard"
+                href="/wallet"
                 className="rounded-md border px-3 py-2 hover:bg-muted"
               >
                 Wallet dashboard
