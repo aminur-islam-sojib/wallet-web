@@ -3,7 +3,7 @@ import DrawerRight from "./Drawer";
 import MasterDialoge from "@/components/Dashboard/MasterDialog";
 import TransactionForm from "@/components/Dashboard/transaction-form";
 import { DashboardFilters, getDashboardData } from "@/lib/dashboard";
-import BottomDrawer from "./BottomDrawer";
+import WalletBottomNav from "./WalletBottomNav";
 import { Separator } from "../separator";
 
 function firstParam(value: string | string[] | undefined) {
@@ -60,7 +60,7 @@ export default async function Header({ searchParams }: HeaderProps) {
             />
           </MasterDialoge>
         </div>
-        <BottomDrawer
+        <WalletBottomNav
           incomeCategories={incomeCategories}
           expenseCategories={expenseCategories}
           tags={data.tags}
