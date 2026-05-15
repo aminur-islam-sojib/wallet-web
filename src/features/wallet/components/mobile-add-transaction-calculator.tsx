@@ -76,7 +76,9 @@ export default function MobileAddTransactionCalculator({
   const categories = type === "income" ? incomeCategories : expenseCategories;
   const evaluated = useMemo(() => evaluateExpression(expression), [expression]);
   const amount = result ?? evaluated.value;
-  const canSave = Boolean(categoryId && amount && amount > 0 && !evaluated.error);
+  const canSave = Boolean(
+    categoryId && amount && amount > 0 && !evaluated.error,
+  );
 
   function selectType(nextType: TransactionType) {
     const nextCategories =
@@ -163,7 +165,11 @@ export default function MobileAddTransactionCalculator({
   return (
     <form ref={formRef} action={handleAction} className="flex h-full flex-col">
       <input type="hidden" name="type" value={type} />
-      <input type="hidden" name="amount" value={amount ? formatAmount(amount) : ""} />
+      <input
+        type="hidden"
+        name="amount"
+        value={amount ? formatAmount(amount) : ""}
+      />
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="categoryId" value={categoryId} />
       <input type="hidden" name="note" value={note} />
@@ -175,11 +181,7 @@ export default function MobileAddTransactionCalculator({
         <>
           <input type="hidden" name="attachmentName" value={attachment.name} />
           <input type="hidden" name="attachmentType" value={attachment.type} />
-          <input
-            type="hidden"
-            name="attachmentSize"
-            value={attachment.size}
-          />
+          <input type="hidden" name="attachmentSize" value={attachment.size} />
         </>
       ) : null}
       {selectedTagIds.map((tagId) => (
@@ -212,7 +214,9 @@ export default function MobileAddTransactionCalculator({
           <p className="mt-2 min-h-12 break-all text-right text-4xl font-semibold tracking-normal">
             {amount ? formatAmount(amount) : "0"}
           </p>
-          {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
+          {error ? (
+            <p className="mt-2 text-sm text-destructive">{error}</p>
+          ) : null}
         </section>
 
         <section className="grid gap-3">
@@ -387,14 +391,14 @@ function DetailsDrawer({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-[60] bg-black/40 transition-opacity",
+          "fixed inset-0 z-60 bg-black/40 transition-opacity",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={onClose}
       />
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-[70] flex w-[88vw] max-w-sm flex-col border-l bg-background shadow-2xl transition-transform duration-300",
+          "fixed inset-y-0 right-0 z-70 flex w-[88vw] max-w-sm flex-col border-l bg-background shadow-2xl transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full",
         )}
         aria-hidden={!open}
@@ -603,7 +607,9 @@ function tokenize(expression: string): Token[] {
   }
 
   if (numberBuffer) tokens.push(Number(numberBuffer));
-  return tokens.every((token) => typeof token !== "number" || Number.isFinite(token))
+  return tokens.every(
+    (token) => typeof token !== "number" || Number.isFinite(token),
+  )
     ? tokens
     : [];
 }
@@ -644,7 +650,10 @@ function applyOperator(left: number, right: number, operator: string) {
 }
 
 function formatAmount(value: number) {
-  return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+  return value
+    .toFixed(2)
+    .replace(/\.00$/, "")
+    .replace(/(\.\d)0$/, "$1");
 }
 
 function displayKey(key: string) {

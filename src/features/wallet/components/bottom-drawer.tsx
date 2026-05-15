@@ -44,7 +44,7 @@ export default function BottomDrawer({
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="bottom">
         <DrawerOverlay />
-        <DrawerContent className="h-[calc(100dvh-32px)] max-h-[calc(100dvh-32px)] rounded-t-2xl p-0">
+        <DrawerContent className="h-dvh max-h-dvh rounded-none border-0 p-0">
           <DrawerHeader className="px-4 py-4 text-left">
             <DrawerTitle>Add transaction</DrawerTitle>
             <DrawerDescription>
@@ -52,12 +52,14 @@ export default function BottomDrawer({
             </DrawerDescription>
           </DrawerHeader>
 
-          <MobileAddTransactionCalculator
-            incomeCategories={incomeCategories}
-            expenseCategories={expenseCategories}
-            tags={tags}
-            onSaved={() => setIsOpen(false)}
-          />
+          <div className="flex-1 overflow-y-auto">
+            <MobileAddTransactionCalculator
+              incomeCategories={incomeCategories}
+              expenseCategories={expenseCategories}
+              tags={tags}
+              onSaved={() => setIsOpen(false)}
+            />
+          </div>
         </DrawerContent>
       </Drawer>
     </>
