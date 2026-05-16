@@ -34,6 +34,11 @@ export type MonthlyLimit = {
   amountPaisa: number;
 };
 
+export type TodaySummary = {
+  income: number;
+  expense: number;
+};
+
 export type TransactionRow = {
   id: string;
   type: TransactionType;

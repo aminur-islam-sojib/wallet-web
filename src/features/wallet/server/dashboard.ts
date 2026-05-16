@@ -9,6 +9,7 @@ import type {
   DashboardFilters,
   MonthlyLimit as MonthlyLimitOption,
   TagOption,
+  TodaySummary,
   TransactionRow,
 } from "@/types/wallet";
 
@@ -28,11 +29,24 @@ function isObjectId(value?: string) {
   return Boolean(value && Types.ObjectId.isValid(value));
 }
 
+function getTodayRange() {
+  const today = new Date();
+  const start = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
+  );
+  const end = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + 1),
+  );
+
+  return { start, end };
+}
+
 export async function getDashboardData(
   userId: string,
   filters: DashboardFilters,
 ) {
   const { value: selectedMonth, start, end } = getMonthRange(filters.month);
+  const { start: todayStart, end: todayEnd } = getTodayRange();
 
   const [categories, tags] = await Promise.all([
     Category.find({ userId }).sort({ type: 1, name: 1 }).lean(),
@@ -56,19 +70,32 @@ export async function getDashboardData(
     query.tagIds = filters.tagId;
   }
 
-  const [transactions, monthlyTotals, monthlyLimit] = await Promise.all([
-    Transaction.find(query).sort({ date: -1, createdAt: -1 }).limit(50).lean(),
-    Transaction.aggregate<{ _id: "income" | "expense"; total: number }>([
-      {
-        $match: {
-          userId: new Types.ObjectId(userId),
-          date: { $gte: start, $lt: end },
+  const [transactions, monthlyTotals, todayTotals, monthlyLimit] =
+    await Promise.all([
+      Transaction.find(query)
+        .sort({ date: -1, createdAt: -1 })
+        .limit(50)
+        .lean(),
+      Transaction.aggregate<{ _id: "income" | "expense"; total: number }>([
+        {
+          $match: {
+            userId: new Types.ObjectId(userId),
+            date: { $gte: start, $lt: end },
+          },
         },
-      },
-      { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
-    ]),
-    MonthlyLimit.findOne({ userId, month: selectedMonth }).lean(),
-  ]);
+        { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
+      ]),
+      Transaction.aggregate<{ _id: "income" | "expense"; total: number }>([
+        {
+          $match: {
+            userId: new Types.ObjectId(userId),
+            date: { $gte: todayStart, $lt: todayEnd },
+          },
+        },
+        { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
+      ]),
+      MonthlyLimit.findOne({ userId, month: selectedMonth }).lean(),
+    ]);
 
   const categoryById = new Map(
     categories.map((category) => [category._id.toString(), category]),
@@ -78,6 +105,10 @@ export async function getDashboardData(
     monthlyTotals.find((item) => item._id === "income")?.total ?? 0;
   const expense =
     monthlyTotals.find((item) => item._id === "expense")?.total ?? 0;
+  const todaySummary: TodaySummary = {
+    income: todayTotals.find((item) => item._id === "income")?.total ?? 0,
+    expense: todayTotals.find((item) => item._id === "expense")?.total ?? 0,
+  };
 
   return {
     selectedMonth,
@@ -102,6 +133,7 @@ export async function getDashboardData(
       expense,
       balance: income - expense,
     },
+    todaySummary,
     monthlyLimit: monthlyLimit
       ? ({
           month: monthlyLimit.month,

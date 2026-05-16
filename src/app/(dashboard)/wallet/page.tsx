@@ -33,15 +33,11 @@ export default async function DashboardPage({
       }}
       selectedMonth={data.selectedMonth}
       summary={data.summary}
+      todaySummary={data.todaySummary}
       monthlyLimit={data.monthlyLimit}
       categories={data.categories}
       tags={data.tags}
       transactions={data.transactions}
-      filters={{
-        type: filters.type,
-        categoryId: filters.categoryId,
-        tagId: filters.tagId,
-      }}
     />
   );
 }

@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Filter, Tags } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  CalendarDays,
+} from "lucide-react";
 
-import { createCategory, createTag } from "@/features/wallet/server/actions";
 import TransactionEditDrawer from "@/features/wallet/components/transaction-edit-drawer";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
@@ -9,9 +13,9 @@ import type {
   CategoryOption,
   MonthlyLimit,
   TagOption,
+  TodaySummary,
   TransactionRow,
 } from "@/types/wallet";
-import ManageLists from "./Dashboard/ManageList";
 
 type DashboardProps = {
   user: {
@@ -25,58 +29,37 @@ type DashboardProps = {
     expense: number;
     balance: number;
   };
+  todaySummary: TodaySummary;
   monthlyLimit: MonthlyLimit | null;
   categories: CategoryOption[];
   tags: TagOption[];
   transactions: TransactionRow[];
-  filters: {
-    type?: string;
-    categoryId?: string;
-    tagId?: string;
-  };
 };
 
 export function Dashboard({
+  selectedMonth,
   summary,
+  todaySummary,
   monthlyLimit,
   categories,
   tags,
   transactions,
-  filters,
 }: DashboardProps) {
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4  sm:px-6 lg:px-8">
-        <section className="grid gap-3 py-0 md:grid-cols-4 md:py-6">
-          <SummaryTile
-            label="Income"
-            value={formatBDT(summary.income)}
-            tone="income"
-          />
-          <SummaryTile
-            label="Cost"
-            value={formatBDT(summary.expense)}
-            tone="expense"
-          />
-          <SummaryTile
-            label="Balance"
-            value={formatBDT(summary.balance)}
-            tone="balance"
-          />
-          <MonthlyLimitTile
-            expense={summary.expense}
+        <section className="py-0 md:py-6">
+          <WalletSummaryCard
+            selectedMonth={selectedMonth}
+            balance={summary.balance}
+            monthExpense={summary.expense}
+            todaySummary={todaySummary}
             monthlyLimit={monthlyLimit}
           />
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="flex flex-col gap-6">
-            {/* <FilterPanel
-              selectedMonth={selectedMonth}
-              categories={categories}
-              tags={tags}
-              filters={filters}
-            /> */}
             <TransactionList
               transactions={transactions}
               categories={categories}
@@ -89,150 +72,143 @@ export function Dashboard({
   );
 }
 
-function MonthlyLimitTile({
-  expense,
+function WalletSummaryCard({
+  selectedMonth,
+  balance,
+  monthExpense,
+  todaySummary,
   monthlyLimit,
 }: {
-  expense: number;
+  selectedMonth: string;
+  balance: number;
+  monthExpense: number;
+  todaySummary: TodaySummary;
   monthlyLimit: MonthlyLimit | null;
 }) {
-  const progress = monthlyLimit
-    ? Math.min(Math.round((expense / monthlyLimit.amountPaisa) * 100), 999)
+  const budgetPercent = monthlyLimit
+    ? Math.min(Math.round((monthExpense / monthlyLimit.amountPaisa) * 100), 999)
     : 0;
-  const barWidth = monthlyLimit ? `${Math.min(progress, 100)}%` : "0%";
-  const isOverLimit = monthlyLimit ? expense > monthlyLimit.amountPaisa : false;
+  const barWidth = monthlyLimit ? `${Math.min(budgetPercent, 100)}%` : "0%";
+  const remaining = monthlyLimit
+    ? monthlyLimit.amountPaisa - monthExpense
+    : null;
+  const remainingLabel =
+    remaining === null
+      ? null
+      : remaining >= 0
+        ? `${formatBDT(remaining)} left`
+        : `${formatBDT(Math.abs(remaining))} over`;
+  const isOverLimit = remaining !== null && remaining < 0;
 
   return (
-    <div className="rounded-lg border border-violet-200 bg-violet-50 p-4 text-violet-950">
-      <p className="text-sm font-medium opacity-75">Monthly limit</p>
-      {monthlyLimit ? (
-        <>
-          <p className="mt-2 text-2xl font-semibold tracking-normal">
-            {progress}%
+    <div className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">
+            Total balance
           </p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/80">
+          <p className="mt-2 break-words text-3xl font-semibold tracking-normal text-foreground sm:text-4xl">
+            {formatBDT(balance)}
+          </p>
+        </div>
+        <p className="text-sm font-medium text-muted-foreground">
+          {selectedMonth}
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.5fr]">
+        <TodayStat
+          label="Today income"
+          value={formatBDT(todaySummary.income)}
+          tone="income"
+        />
+        <TodayStat
+          label="Today cost"
+          value={formatBDT(todaySummary.expense)}
+          tone="expense"
+        />
+        <div className="rounded-lg border border-border bg-muted/30 p-4 sm:col-span-2 lg:col-span-1">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                Monthly budget
+              </p>
+              <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground">
+                {monthlyLimit ? `${budgetPercent}% used` : "No budget set"}
+              </p>
+            </div>
+            {monthlyLimit ? (
+              <span
+                className={
+                  isOverLimit
+                    ? "rounded-md bg-rose-100 px-2 py-1 text-sm font-medium text-rose-700"
+                    : "rounded-md bg-emerald-100 px-2 py-1 text-sm font-medium text-emerald-700"
+                }
+              >
+                {remainingLabel}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-background">
             <div
               className={
                 isOverLimit
                   ? "h-full rounded-full bg-rose-500"
-                  : "h-full rounded-full bg-violet-600"
+                  : "h-full rounded-full bg-foreground"
               }
               style={{ width: barWidth }}
             />
           </div>
-          <p className="mt-2 text-sm opacity-80">
-            {formatBDT(expense)} of {formatBDT(monthlyLimit.amountPaisa)}
+
+          <p className="mt-3 text-sm text-muted-foreground">
+            {monthlyLimit
+              ? `${formatBDT(monthExpense)} spent of ${formatBDT(
+                  monthlyLimit.amountPaisa,
+                )}`
+              : `${formatBDT(monthExpense)} spent this month`}
           </p>
-        </>
-      ) : (
-        <>
-          <p className="mt-2 text-xl font-semibold tracking-normal">
-            No monthly limit
-          </p>
-          <p className="mt-2 text-sm opacity-80">
-            Add one from the floating action.
-          </p>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
 
-function SummaryTile({
+function TodayStat({
   label,
   value,
   tone,
 }: {
   label: string;
   value: string;
-  tone: "income" | "expense" | "balance";
+  tone: "income" | "expense";
 }) {
+  const Icon = tone === "income" ? ArrowUpRight : ArrowDownRight;
   const toneClass =
     tone === "income"
       ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-      : tone === "expense"
-        ? "border-rose-200 bg-rose-50 text-rose-950"
-        : "border-sky-200 bg-sky-50 text-sky-950";
+      : "border-rose-200 bg-rose-50 text-rose-950";
+  const iconClass =
+    tone === "income"
+      ? "bg-emerald-100 text-emerald-700"
+      : "bg-rose-100 text-rose-700";
 
   return (
-    <div className={`rounded-lg border p-4 ${toneClass}`}>
-      <p className="text-sm font-medium opacity-75">{label}</p>
-      <p className="mt-2 text-2xl font-semibold tracking-normal">{value}</p>
+    <div
+      className={`flex min-h-24 items-center gap-3 rounded-lg border p-4 ${toneClass}`}
+    >
+      <span
+        className={`grid size-11 shrink-0 place-items-center rounded-full ${iconClass}`}
+      >
+        <Icon className="size-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-medium opacity-75">{label}</p>
+        <p className="mt-1 break-words text-xl font-semibold tracking-normal">
+          {value}
+        </p>
+      </div>
     </div>
-  );
-}
-
-function FilterPanel({
-  selectedMonth,
-  categories,
-  tags,
-  filters,
-}: {
-  selectedMonth: string;
-  categories: CategoryOption[];
-  tags: TagOption[];
-  filters: DashboardProps["filters"];
-}) {
-  return (
-    <form className="rounded-lg border bg-background p-4">
-      <div className="mb-4 flex items-center gap-2">
-        <Filter className="size-4" />
-        <h2 className="font-semibold">Filters</h2>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Field label="Month">
-          <input
-            type="month"
-            name="month"
-            defaultValue={selectedMonth}
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          />
-        </Field>
-        <Field label="Type">
-          <select
-            name="type"
-            defaultValue={filters.type ?? "all"}
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          >
-            <option value="all">All</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </Field>
-        <Field label="Category">
-          <select
-            name="categoryId"
-            defaultValue={filters.categoryId ?? ""}
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          >
-            <option value="">All categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.type === "income" ? "Income" : "Expense"} /{" "}
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Tag">
-          <select
-            name="tagId"
-            defaultValue={filters.tagId ?? ""}
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-          >
-            <option value="">All tags</option>
-            {tags.map((tag) => (
-              <option key={tag.id} value={tag.id}>
-                {tag.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </div>
-      <Button type="submit" className="mt-4">
-        Apply filters
-      </Button>
-    </form>
   );
 }
 
@@ -347,20 +323,5 @@ function TransactionList({
         </div>
       ) : null}
     </section>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm">
-      <span className="font-medium">{label}</span>
-      {children}
-    </label>
   );
 }
