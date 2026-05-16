@@ -15,6 +15,7 @@ import Link from "next/link";
 import LogoutButton from "@/components/Auth/logout-button";
 import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "./wallet-nav";
+import { Hamburger, HamburgerIcon, ListTodo } from "lucide-react";
 type AccountDrawerProps = {
   user: {
     name: string;
@@ -30,7 +31,7 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
   return (
     <>
       <Button variant="outline" onClick={() => setIsOpen(true)}>
-        Account
+        <ListTodo />
       </Button>
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="right">

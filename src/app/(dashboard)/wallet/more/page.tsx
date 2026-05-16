@@ -3,6 +3,7 @@ import { Category } from "@/models/category";
 import { Tag } from "@/models/tag";
 import WalletMoreManager from "@/features/wallet/components/wallet-more-manager";
 import type { CategoryOption, TagOption } from "@/types/wallet";
+import ManageLists from "@/features/wallet/components/Dashboard/ManageList";
 
 export default async function WalletMorePage() {
   const user = await requireUser();
@@ -29,6 +30,9 @@ export default async function WalletMorePage() {
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <WalletMoreManager categories={categoryOptions} tags={tagOptions} />
+        <aside className="flex flex-col gap-6">
+          <ManageLists categories={categoryOptions} tags={tagOptions} />
+        </aside>
       </div>
     </main>
   );
