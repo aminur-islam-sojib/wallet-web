@@ -1,11 +1,13 @@
 import { Types } from "mongoose";
 
 import { Category } from "@/models/category";
+import { MonthlyLimit } from "@/models/monthly-limit";
 import { Tag } from "@/models/tag";
 import { Transaction } from "@/models/transaction";
 import type {
   CategoryOption,
   DashboardFilters,
+  MonthlyLimit as MonthlyLimitOption,
   TagOption,
   TransactionRow,
 } from "@/types/wallet";
@@ -54,7 +56,7 @@ export async function getDashboardData(
     query.tagIds = filters.tagId;
   }
 
-  const [transactions, monthlyTotals] = await Promise.all([
+  const [transactions, monthlyTotals, monthlyLimit] = await Promise.all([
     Transaction.find(query).sort({ date: -1, createdAt: -1 }).limit(50).lean(),
     Transaction.aggregate<{ _id: "income" | "expense"; total: number }>([
       {
@@ -65,6 +67,7 @@ export async function getDashboardData(
       },
       { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
     ]),
+    MonthlyLimit.findOne({ userId, month: selectedMonth }).lean(),
   ]);
 
   const categoryById = new Map(
@@ -99,6 +102,12 @@ export async function getDashboardData(
       expense,
       balance: income - expense,
     },
+    monthlyLimit: monthlyLimit
+      ? ({
+          month: monthlyLimit.month,
+          amountPaisa: monthlyLimit.amountPaisa,
+        } satisfies MonthlyLimitOption)
+      : null,
     transactions: transactions.map((transaction): TransactionRow => {
       const category = categoryById.get(transaction.categoryId.toString());
 

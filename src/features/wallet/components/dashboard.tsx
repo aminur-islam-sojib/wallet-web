@@ -5,7 +5,12 @@ import { createCategory, createTag } from "@/features/wallet/server/actions";
 import TransactionEditDrawer from "@/features/wallet/components/transaction-edit-drawer";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
-import type { CategoryOption, TagOption, TransactionRow } from "@/types/wallet";
+import type {
+  CategoryOption,
+  MonthlyLimit,
+  TagOption,
+  TransactionRow,
+} from "@/types/wallet";
 import ManageLists from "./Dashboard/ManageList";
 
 type DashboardProps = {
@@ -20,6 +25,7 @@ type DashboardProps = {
     expense: number;
     balance: number;
   };
+  monthlyLimit: MonthlyLimit | null;
   categories: CategoryOption[];
   tags: TagOption[];
   transactions: TransactionRow[];
@@ -32,6 +38,7 @@ type DashboardProps = {
 
 export function Dashboard({
   summary,
+  monthlyLimit,
   categories,
   tags,
   transactions,
@@ -40,7 +47,7 @@ export function Dashboard({
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4  sm:px-6 lg:px-8">
-        <section className="grid gap-3 md:grid-cols-3 py-0 md:py-6">
+        <section className="grid gap-3 py-0 md:grid-cols-4 md:py-6">
           <SummaryTile
             label="Income"
             value={formatBDT(summary.income)}
@@ -55,6 +62,10 @@ export function Dashboard({
             label="Balance"
             value={formatBDT(summary.balance)}
             tone="balance"
+          />
+          <MonthlyLimitTile
+            expense={summary.expense}
+            monthlyLimit={monthlyLimit}
           />
         </section>
 
@@ -75,6 +86,55 @@ export function Dashboard({
         </section>
       </div>
     </main>
+  );
+}
+
+function MonthlyLimitTile({
+  expense,
+  monthlyLimit,
+}: {
+  expense: number;
+  monthlyLimit: MonthlyLimit | null;
+}) {
+  const progress = monthlyLimit
+    ? Math.min(Math.round((expense / monthlyLimit.amountPaisa) * 100), 999)
+    : 0;
+  const barWidth = monthlyLimit ? `${Math.min(progress, 100)}%` : "0%";
+  const isOverLimit = monthlyLimit ? expense > monthlyLimit.amountPaisa : false;
+
+  return (
+    <div className="rounded-lg border border-violet-200 bg-violet-50 p-4 text-violet-950">
+      <p className="text-sm font-medium opacity-75">Monthly limit</p>
+      {monthlyLimit ? (
+        <>
+          <p className="mt-2 text-2xl font-semibold tracking-normal">
+            {progress}%
+          </p>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/80">
+            <div
+              className={
+                isOverLimit
+                  ? "h-full rounded-full bg-rose-500"
+                  : "h-full rounded-full bg-violet-600"
+              }
+              style={{ width: barWidth }}
+            />
+          </div>
+          <p className="mt-2 text-sm opacity-80">
+            {formatBDT(expense)} of {formatBDT(monthlyLimit.amountPaisa)}
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="mt-2 text-xl font-semibold tracking-normal">
+            No monthly limit
+          </p>
+          <p className="mt-2 text-sm opacity-80">
+            Add one from the floating action.
+          </p>
+        </>
+      )}
+    </div>
   );
 }
 

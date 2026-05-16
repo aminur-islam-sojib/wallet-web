@@ -6,8 +6,9 @@ import { Home, List, PieChart, MoreHorizontal, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import BottomDrawer from "@/features/wallet/components/bottom-drawer";
+import WalletFloatingActions from "@/features/wallet/components/wallet-floating-actions";
 
-import type { CategoryOption, TagOption } from "@/types/wallet";
+import type { CategoryOption, MonthlyLimit, TagOption } from "@/types/wallet";
 import { WALLET_NAV_ITEMS } from "../navigation/wallet-nav";
 
 const navItems = [
@@ -18,12 +19,16 @@ const navItems = [
 ];
 
 type WalletBottomNavProps = {
+  selectedMonth: string;
+  monthlyLimit: MonthlyLimit | null;
   incomeCategories: CategoryOption[];
   expenseCategories: CategoryOption[];
   tags: TagOption[];
 };
 
 export default function WalletBottomNav({
+  selectedMonth,
+  monthlyLimit,
   incomeCategories,
   expenseCategories,
   tags,
@@ -32,6 +37,10 @@ export default function WalletBottomNav({
 
   return (
     <div className="sm:hidden">
+      <WalletFloatingActions
+        selectedMonth={selectedMonth}
+        monthlyLimit={monthlyLimit}
+      />
       <BottomDrawer
         incomeCategories={incomeCategories}
         expenseCategories={expenseCategories}

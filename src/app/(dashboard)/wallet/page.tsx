@@ -33,6 +33,7 @@ export default async function DashboardPage({
       }}
       selectedMonth={data.selectedMonth}
       summary={data.summary}
+      monthlyLimit={data.monthlyLimit}
       categories={data.categories}
       tags={data.tags}
       transactions={data.transactions}

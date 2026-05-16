@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { bdtToPaisa } from "@/lib/money";
 import { Category } from "@/models/category";
+import { MonthlyLimit } from "@/models/monthly-limit";
 import { Tag } from "@/models/tag";
 import { Transaction } from "@/models/transaction";
 
@@ -76,6 +77,60 @@ const tagUpdateSchema = z.object({
 const tagDeleteSchema = z.object({
   id: z.string().trim().min(1),
 });
+
+export type MonthlyLimitActionState = {
+  success: boolean;
+  message?: string;
+};
+
+const monthlyLimitSchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}$/, "Choose a valid month."),
+  amount: amountSchema,
+});
+
+export async function saveMonthlyLimit(
+  _previousState: MonthlyLimitActionState,
+  formData: FormData,
+): Promise<MonthlyLimitActionState> {
+  try {
+    const user = await requireUser();
+    const parsed = monthlyLimitSchema.parse({
+      month: formData.get("month"),
+      amount: formData.get("amount"),
+    });
+
+    await MonthlyLimit.updateOne(
+      { userId: user._id, month: parsed.month },
+      {
+        $set: {
+          amountPaisa: bdtToPaisa(parsed.amount),
+        },
+        $setOnInsert: {
+          userId: user._id,
+          month: parsed.month,
+        },
+      },
+      { upsert: true },
+    );
+
+    revalidatePath("/wallet");
+
+    return { success: true, message: "Monthly limit saved." };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: error.issues[0]?.message ?? "Check the limit details.",
+      };
+    }
+
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Could not save monthly limit.",
+    };
+  }
+}
 
 export async function createTransaction(formData: FormData) {
   const user = await requireUser();

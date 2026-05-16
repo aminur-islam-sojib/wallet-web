@@ -29,6 +29,11 @@ export type TagOption = {
   name: string;
 };
 
+export type MonthlyLimit = {
+  month: string;
+  amountPaisa: number;
+};
+
 export type TransactionRow = {
   id: string;
   type: TransactionType;

@@ -83,6 +83,8 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
         <Separator />
       </div>
       <WalletBottomNav
+        selectedMonth={data.selectedMonth}
+        monthlyLimit={data.monthlyLimit}
         incomeCategories={incomeCategories}
         expenseCategories={expenseCategories}
         tags={data.tags}
