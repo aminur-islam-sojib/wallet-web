@@ -51,7 +51,7 @@ export default function WalletBottomNav({
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm transition-all duration-300 ease-out",
+                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm",
                       isActive
                         ? "-translate-y-1 bg-foreground text-background shadow-sm"
                         : "text-muted-foreground hover:-translate-y-0.5 hover:text-foreground",
@@ -67,7 +67,7 @@ export default function WalletBottomNav({
               <button
                 type="button"
                 onClick={open}
-                className="mx-auto flex size-14 items-center justify-center rounded-full bg-foreground text-background shadow-lg shadow-foreground/20 transition-transform duration-300 ease-out hover:scale-105 active:scale-95"
+                className="pressable-soft mx-auto flex size-14 items-center justify-center rounded-full bg-foreground text-background shadow-lg shadow-foreground/20 transition-transform duration-300 ease-out hover:scale-105"
                 aria-label="Add transaction"
               >
                 <Plus className="size-6" />
@@ -81,7 +81,7 @@ export default function WalletBottomNav({
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm transition-all duration-300 ease-out",
+                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm",
                       isActive
                         ? "-translate-y-1 bg-foreground text-background shadow-sm"
                         : "text-muted-foreground hover:-translate-y-0.5 hover:text-foreground",

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
   Drawer,
@@ -15,24 +16,33 @@ import Link from "next/link";
 import LogoutButton from "@/components/Auth/logout-button";
 import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "./wallet-nav";
-import { Hamburger, HamburgerIcon, ListTodo } from "lucide-react";
+import { ListTodo } from "lucide-react";
 type AccountDrawerProps = {
   user: {
     name: string;
     email: string;
     image?: string | null;
   };
+  renderTrigger?: (open: () => void, isOpen: boolean) => ReactNode;
 };
 
-export default function DrawerRight({ user }: AccountDrawerProps) {
+export default function DrawerRight({
+  user,
+  renderTrigger,
+}: AccountDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const openDrawer = () => setIsOpen(true);
 
   return (
     <>
-      <Button variant="outline" onClick={() => setIsOpen(true)}>
-        <ListTodo />
-      </Button>
+      {renderTrigger ? (
+        renderTrigger(openDrawer, isOpen)
+      ) : (
+        <Button variant="outline" onClick={openDrawer}>
+          <ListTodo />
+        </Button>
+      )}
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="right">
         <DrawerOverlay />
@@ -76,7 +86,7 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "min-h-11 rounded-md border px-3 py-2 text-sm transition",
+                      "pressable-soft nav-active-transition rounded-md border px-3 py-2 text-sm justify-center",
                       isActive
                         ? "border-foreground/30 bg-foreground text-background"
                         : "hover:bg-muted",
@@ -91,11 +101,11 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
               <div className="mt-4 grid gap-2">
                 <Link
                   href="/health"
-                  className="min-h-11 rounded-md border px-3 py-2 text-sm hover:bg-muted"
+                  className="pressable-soft nav-active-transition rounded-md border px-3 py-2 text-sm hover:bg-muted"
                 >
                   Health tracker
                 </Link>
-                <div className="min-h-11 rounded-md border px-3 py-2 text-muted-foreground">
+                <div className="  rounded-md border px-3 py-2 text-muted-foreground">
                   Settings (coming soon)
                 </div>
               </div>

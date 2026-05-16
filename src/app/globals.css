@@ -128,3 +128,12 @@
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .pressable-soft {
+    @apply transition-transform duration-150 ease-out motion-safe:active:scale-[0.98] motion-safe:active:translate-y-px motion-safe:active:shadow-sm;
+  }
+  .nav-active-transition {
+    @apply transition-[background-color,color,transform,box-shadow,border-color] duration-200 ease-out;
+  }
+}

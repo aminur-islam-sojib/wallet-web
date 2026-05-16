@@ -6,6 +6,7 @@ import React, {
   HTMLAttributes,
   ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 type DrawerSide = "top" | "bottom" | "left" | "right";
@@ -50,9 +51,13 @@ const Drawer: React.FC<DrawerProps> = ({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onOpenChange]);
 
+  const drawer = <AnimatePresence>{open && <>{children}</>}</AnimatePresence>;
+
   return (
     <DrawerContext.Provider value={{ open, onOpenChange, side }}>
-      <AnimatePresence>{open && <>{children}</>}</AnimatePresence>
+      {typeof document === "undefined"
+        ? null
+        : createPortal(drawer, document.body)}
     </DrawerContext.Provider>
   );
 };

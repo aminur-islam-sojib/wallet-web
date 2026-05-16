@@ -5,6 +5,7 @@ import { Bell, Filter, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/wallet-nav";
+import DrawerRight from "@/components/ui/Shared/Drawer";
 
 type WalletMobileHeaderProps = {
   user: {
@@ -85,6 +86,22 @@ export default function WalletMobileHeader({
   const isTransactions = pathname.startsWith("/wallet/transactions");
   const isWalletRoute = pathname.startsWith("/wallet");
 
+  const accountTrigger = (
+    <DrawerRight
+      user={user}
+      renderTrigger={(open) => (
+        <button
+          type="button"
+          className="pressable-soft grid size-11 place-items-center rounded-full border border-border"
+          aria-label="Account"
+          onClick={open}
+        >
+          <Avatar user={user} className="size-9" />
+        </button>
+      )}
+    />
+  );
+
   return (
     <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur sm:hidden">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
@@ -125,13 +142,7 @@ export default function WalletMobileHeader({
               >
                 <Filter className="size-5" />
               </button>
-              <button
-                type="button"
-                className="grid size-11 place-items-center rounded-full border border-border"
-                aria-label="Account"
-              >
-                <Avatar user={user} className="size-9" />
-              </button>
+              {accountTrigger}
             </>
           ) : (
             <>
@@ -142,15 +153,7 @@ export default function WalletMobileHeader({
               >
                 <Bell className="size-5" />
               </button>
-              {isWalletHome ? (
-                <button
-                  type="button"
-                  className="grid size-11 place-items-center rounded-full border border-border"
-                  aria-label="Account"
-                >
-                  <Avatar user={user} className="size-9" />
-                </button>
-              ) : null}
+              {isWalletHome ? accountTrigger : null}
             </>
           )}
         </div>
