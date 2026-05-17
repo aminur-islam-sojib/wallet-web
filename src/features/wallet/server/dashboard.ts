@@ -4,6 +4,10 @@ import { Category } from "@/models/category";
 import { MonthlyLimit } from "@/models/monthly-limit";
 import { Tag } from "@/models/tag";
 import { Transaction } from "@/models/transaction";
+import {
+  dateInputValueToUtcRange,
+  formatDateInputValueInTimeZone,
+} from "@/lib/date";
 import type {
   CategoryOption,
   DashboardFilters,
@@ -13,11 +17,16 @@ import type {
   TransactionRow,
 } from "@/types/wallet";
 
+const WALLET_TIME_ZONE = "Asia/Dhaka";
+
 function getMonthRange(month?: string) {
   const value =
     month && /^\d{4}-\d{2}$/.test(month)
       ? month
-      : new Date().toISOString().slice(0, 7);
+      : formatDateInputValueInTimeZone(new Date(), WALLET_TIME_ZONE).slice(
+          0,
+          7,
+        );
   const [year, monthIndex] = value.split("-").map(Number);
   const start = new Date(Date.UTC(year, monthIndex - 1, 1));
   const end = new Date(Date.UTC(year, monthIndex, 1));
@@ -30,15 +39,9 @@ function isObjectId(value?: string) {
 }
 
 function getTodayRange() {
-  const today = new Date();
-  const start = new Date(
-    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
+  return dateInputValueToUtcRange(
+    formatDateInputValueInTimeZone(new Date(), WALLET_TIME_ZONE),
   );
-  const end = new Date(
-    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + 1),
-  );
-
-  return { start, end };
 }
 
 export async function getDashboardData(

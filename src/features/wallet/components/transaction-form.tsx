@@ -2,9 +2,8 @@
 
 import { createTransaction } from "@/features/wallet/server/actions";
 import { Button } from "@/components/ui/button";
+import { formatDateInputValue } from "@/lib/date";
 import type { CategoryOption, TagOption } from "@/types/wallet";
-
-const today = new Date().toISOString().slice(0, 10);
 
 type TransactionFormProps = {
   incomeCategories: CategoryOption[];
@@ -17,6 +16,8 @@ export default function TransactionForm({
   expenseCategories,
   tags,
 }: TransactionFormProps) {
+  const today = formatDateInputValue();
+
   return (
     <form
       action={createTransaction}

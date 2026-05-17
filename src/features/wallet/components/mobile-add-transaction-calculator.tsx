@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { formatDateInputValue } from "@/lib/date";
 import { createTransaction } from "@/features/wallet/server/actions";
 import type {
   CategoryOption,
@@ -24,7 +25,6 @@ import type {
   TransactionType,
 } from "@/types/wallet";
 
-const today = new Date().toISOString().slice(0, 10);
 const paymentOptions: { value: PaymentMethod; label: string }[] = [
   { value: "cash", label: "Cash" },
   { value: "card", label: "Card" },
@@ -57,6 +57,7 @@ export default function MobileAddTransactionCalculator({
 }: MobileAddTransactionCalculatorProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const today = formatDateInputValue();
   const [type, setType] = useState<TransactionType>("expense");
   const [expression, setExpression] = useState("");
   const [result, setResult] = useState<number | null>(null);
