@@ -6,7 +6,6 @@ import { Home, List, PieChart, MoreHorizontal, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import BottomDrawer from "@/features/wallet/components/bottom-drawer";
-import WalletFloatingActions from "@/features/wallet/components/wallet-floating-actions";
 
 import type { CategoryOption, MonthlyLimit, TagOption } from "@/types/wallet";
 import { WALLET_NAV_ITEMS } from "../navigation/wallet-nav";
@@ -27,8 +26,6 @@ type WalletBottomNavProps = {
 };
 
 export default function WalletBottomNav({
-  selectedMonth,
-  monthlyLimit,
   incomeCategories,
   expenseCategories,
   tags,
@@ -37,18 +34,14 @@ export default function WalletBottomNav({
 
   return (
     <div className="sm:hidden">
-      <WalletFloatingActions
-        selectedMonth={selectedMonth}
-        monthlyLimit={monthlyLimit}
-      />
       <BottomDrawer
         incomeCategories={incomeCategories}
         expenseCategories={expenseCategories}
         tags={tags}
         hideDefaultTrigger
         renderTrigger={(open) => (
-          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-2 shadow-[0_-12px_30px_-24px_rgba(15,23,42,0.35)]">
-            <nav className="grid grid-cols-5 items-end gap-2">
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 shadow-[0_-12px_30px_-24px_rgba(15,23,42,0.35)] backdrop-blur">
+            <nav className="mx-auto grid max-w-md grid-cols-5 items-center gap-1">
               {navItems.slice(0, 2).map((item) => {
                 const isActive =
                   item.href === "/wallet"
@@ -60,10 +53,10 @@ export default function WalletBottomNav({
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm",
+                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1.5 text-sm",
                       isActive
-                        ? "-translate-y-1 bg-foreground text-background shadow-sm"
-                        : "text-muted-foreground hover:-translate-y-0.5 hover:text-foreground",
+                        ? "text-[#534ab7]"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                     aria-current={isActive ? "page" : undefined}
                   >
@@ -76,7 +69,7 @@ export default function WalletBottomNav({
               <button
                 type="button"
                 onClick={open}
-                className="pressable-soft mx-auto flex size-14 items-center justify-center rounded-full bg-foreground text-background shadow-lg shadow-foreground/20 transition-transform duration-300 ease-out hover:scale-105"
+                className="pressable-soft mx-auto flex size-12 items-center justify-center rounded-2xl bg-[#534ab7] text-white shadow-lg shadow-[#534ab7]/25 transition-transform duration-300 ease-out hover:scale-105"
                 aria-label="Add transaction"
               >
                 <Plus className="size-6" />
@@ -90,10 +83,10 @@ export default function WalletBottomNav({
                     key={item.key}
                     href={item.href}
                     className={cn(
-                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-sm",
+                      "pressable-soft nav-active-transition flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1.5 text-sm",
                       isActive
-                        ? "-translate-y-1 bg-foreground text-background shadow-sm"
-                        : "text-muted-foreground hover:-translate-y-0.5 hover:text-foreground",
+                        ? "text-[#534ab7]"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                     aria-current={isActive ? "page" : undefined}
                   >

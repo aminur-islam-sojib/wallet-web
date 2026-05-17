@@ -77,14 +77,16 @@ function Avatar({
 
 export default function WalletMobileHeader({
   user,
-  greeting,
-  dateLabel,
 }: WalletMobileHeaderProps) {
   const pathname = usePathname();
   const routeLabel = getRouteLabel(pathname);
   const isWalletHome = pathname === "/wallet";
   const isTransactions = pathname.startsWith("/wallet/transactions");
   const isWalletRoute = pathname.startsWith("/wallet");
+
+  if (isWalletHome) {
+    return null;
+  }
 
   const accountTrigger = (
     <DrawerRight
@@ -105,16 +107,7 @@ export default function WalletMobileHeader({
   return (
     <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur sm:hidden">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
-        {isWalletHome ? (
-          <div className="min-w-0">
-            <p className="text-base font-semibold text-foreground">
-              {greeting}, {user.name}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Today is <span className="font-semibold">{dateLabel}</span>
-            </p>
-          </div>
-        ) : isTransactions ? (
+        {isTransactions ? (
           <p className="text-lg font-semibold text-foreground">Transactions</p>
         ) : (
           <div className="flex items-center gap-3">
@@ -153,7 +146,6 @@ export default function WalletMobileHeader({
               >
                 <Bell className="size-5" />
               </button>
-              {isWalletHome ? accountTrigger : null}
             </>
           )}
         </div>

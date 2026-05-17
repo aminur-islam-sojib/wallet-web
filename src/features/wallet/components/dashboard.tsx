@@ -1,13 +1,7 @@
-import Link from "next/link";
-import {
-  ArrowDownRight,
-  ArrowRight,
-  ArrowUpRight,
-  CalendarDays,
-} from "lucide-react";
+import { Bell, TrendingDown, TrendingUp } from "lucide-react";
 
-import TransactionEditDrawer from "@/features/wallet/components/transaction-edit-drawer";
-import { Button } from "@/components/ui/button";
+import { WalletDashboardBudget } from "@/features/wallet/components/wallet-dashboard-budget";
+import { WalletDashboardTransactions } from "@/features/wallet/components/wallet-dashboard-transactions";
 import { formatBDT } from "@/lib/money";
 import type {
   CategoryOption,
@@ -37,6 +31,7 @@ type DashboardProps = {
 };
 
 export function Dashboard({
+  user,
   selectedMonth,
   summary,
   todaySummary,
@@ -45,22 +40,46 @@ export function Dashboard({
   tags,
   transactions,
 }: DashboardProps) {
-  return (
-    <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4  sm:px-6 lg:px-8">
-        <section className="py-0 md:py-6">
-          <WalletSummaryCard
-            selectedMonth={selectedMonth}
-            balance={summary.balance}
-            monthExpense={summary.expense}
-            todaySummary={todaySummary}
-            monthlyLimit={monthlyLimit}
-          />
-        </section>
+  const updatedLabel = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date());
+  const greeting = getGreeting();
 
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="flex flex-col gap-6">
-            <TransactionList
+  return (
+    <main className="-mt-24 min-h-screen bg-[#f5f5f7] pb-6 sm:mt-0 sm:bg-muted/30 sm:py-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-col sm:px-6 lg:px-8">
+        <section className="mx-auto flex w-full max-w-md flex-col overflow-hidden bg-[#f5f5f7] sm:max-w-none sm:overflow-visible sm:rounded-2xl sm:border sm:border-border/70 sm:bg-[#f5f5f7] sm:p-4 lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-6">
+          <div className="min-w-0">
+            <WalletHero
+              user={user}
+              balance={summary.balance}
+              greeting={greeting}
+              updatedLabel={updatedLabel}
+            />
+
+            <div className="relative z-10 -mt-4 grid grid-cols-2 gap-2 px-4 sm:-mt-5 sm:gap-3 sm:px-5">
+              <TodayStat
+                label="Today's income"
+                value={formatBDT(todaySummary.income)}
+                tone="income"
+              />
+              <TodayStat
+                label="Today's cost"
+                value={formatBDT(todaySummary.expense)}
+                tone="expense"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 px-4 pb-5 pt-4 sm:px-5 lg:px-0 lg:pt-0">
+            <WalletDashboardBudget
+              selectedMonth={selectedMonth}
+              monthExpense={summary.expense}
+              monthlyLimit={monthlyLimit}
+            />
+            <WalletDashboardTransactions
               transactions={transactions}
               categories={categories}
               tags={tags}
@@ -72,104 +91,64 @@ export function Dashboard({
   );
 }
 
-function WalletSummaryCard({
-  selectedMonth,
+function WalletHero({
+  user,
   balance,
-  monthExpense,
-  todaySummary,
-  monthlyLimit,
+  greeting,
+  updatedLabel,
 }: {
-  selectedMonth: string;
+  user: DashboardProps["user"];
   balance: number;
-  monthExpense: number;
-  todaySummary: TodaySummary;
-  monthlyLimit: MonthlyLimit | null;
+  greeting: string;
+  updatedLabel: string;
 }) {
-  const budgetPercent = monthlyLimit
-    ? Math.min(Math.round((monthExpense / monthlyLimit.amountPaisa) * 100), 999)
-    : 0;
-  const barWidth = monthlyLimit ? `${Math.min(budgetPercent, 100)}%` : "0%";
-  const remaining = monthlyLimit
-    ? monthlyLimit.amountPaisa - monthExpense
-    : null;
-  const remainingLabel =
-    remaining === null
-      ? null
-      : remaining >= 0
-        ? `${formatBDT(remaining)} left`
-        : `${formatBDT(Math.abs(remaining))} over`;
-  const isOverLimit = remaining !== null && remaining < 0;
+  return (
+    <div className="rounded-b-3xl bg-[#17172b] px-5 pb-8 pt-5 text-white shadow-[0_18px_40px_-32px_rgba(23,23,43,0.8)] sm:rounded-2xl sm:px-6 sm:pt-6">
+      <div className="mb-5 flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <WalletAvatar user={user} />
+          <div className="min-w-0">
+            <p className="text-sm text-white/55">{greeting},</p>
+            <p className="truncate text-base font-medium text-white">
+              {user.name}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="grid size-11 shrink-0 place-items-center rounded-full bg-white/10 text-white/75 transition-colors hover:bg-white/15"
+          aria-label="Notifications"
+        >
+          <Bell className="size-5" />
+        </button>
+      </div>
+
+      <p className="text-xs font-medium uppercase tracking-[0.08em] text-white/50">
+        Total balance
+      </p>
+      <p className="mt-1 wrap-break-word text-[34px] font-medium leading-tight tracking-normal text-white sm:text-5xl">
+        {formatBDT(balance)}
+      </p>
+      <p className="mt-1 text-xs text-white/40">Updated {updatedLabel}</p>
+    </div>
+  );
+}
+
+function WalletAvatar({ user }: { user: DashboardProps["user"] }) {
+  if (user.image) {
+    return (
+      <div
+        aria-hidden="true"
+        className="size-11 shrink-0 rounded-full bg-cover bg-center ring-1 ring-white/20"
+        style={{ backgroundImage: `url(${user.image})` }}
+      />
+    );
+  }
 
   return (
-    <div className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            Total balance
-          </p>
-          <p className="mt-2 break-words text-3xl font-semibold tracking-normal text-foreground sm:text-4xl">
-            {formatBDT(balance)}
-          </p>
-        </div>
-        <p className="text-sm font-medium text-muted-foreground">
-          {selectedMonth}
-        </p>
-      </div>
-
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.5fr]">
-        <TodayStat
-          label="Today income"
-          value={formatBDT(todaySummary.income)}
-          tone="income"
-        />
-        <TodayStat
-          label="Today cost"
-          value={formatBDT(todaySummary.expense)}
-          tone="expense"
-        />
-        <div className="rounded-lg border border-border bg-muted/30 p-4 sm:col-span-2 lg:col-span-1">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Monthly budget
-              </p>
-              <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground">
-                {monthlyLimit ? `${budgetPercent}% used` : "No budget set"}
-              </p>
-            </div>
-            {monthlyLimit ? (
-              <span
-                className={
-                  isOverLimit
-                    ? "rounded-md bg-rose-100 px-2 py-1 text-sm font-medium text-rose-700"
-                    : "rounded-md bg-emerald-100 px-2 py-1 text-sm font-medium text-emerald-700"
-                }
-              >
-                {remainingLabel}
-              </span>
-            ) : null}
-          </div>
-
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-background">
-            <div
-              className={
-                isOverLimit
-                  ? "h-full rounded-full bg-rose-500"
-                  : "h-full rounded-full bg-foreground"
-              }
-              style={{ width: barWidth }}
-            />
-          </div>
-
-          <p className="mt-3 text-sm text-muted-foreground">
-            {monthlyLimit
-              ? `${formatBDT(monthExpense)} spent of ${formatBDT(
-                  monthlyLimit.amountPaisa,
-                )}`
-              : `${formatBDT(monthExpense)} spent this month`}
-          </p>
-        </div>
-      </div>
+    <div className="grid size-11 shrink-0 place-items-center rounded-full bg-[#534ab7] text-sm font-semibold text-[#eeedfe]">
+      {getInitials(user.name)}
     </div>
   );
 }
@@ -183,145 +162,48 @@ function TodayStat({
   value: string;
   tone: "income" | "expense";
 }) {
-  const Icon = tone === "income" ? ArrowUpRight : ArrowDownRight;
-  const toneClass =
-    tone === "income"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-      : "border-rose-200 bg-rose-50 text-rose-950";
-  const iconClass =
-    tone === "income"
-      ? "bg-emerald-100 text-emerald-700"
-      : "bg-rose-100 text-rose-700";
+  const isIncome = tone === "income";
+  const Icon = isIncome ? TrendingUp : TrendingDown;
 
   return (
-    <div
-      className={`flex min-h-24 items-center gap-3 rounded-lg border p-4 ${toneClass}`}
-    >
+    <article className="rounded-xl border border-border/70 bg-background p-3 shadow-sm sm:p-4">
       <span
-        className={`grid size-11 shrink-0 place-items-center rounded-full ${iconClass}`}
+        className={
+          isIncome
+            ? "grid size-8 place-items-center rounded-lg bg-[#eaf3de] text-[#3b6d11]"
+            : "grid size-8 place-items-center rounded-lg bg-[#fcebeb] text-[#a32d2d]"
+        }
       >
-        <Icon className="size-5" />
+        <Icon className="size-4" />
       </span>
-      <div className="min-w-0">
-        <p className="text-sm font-medium opacity-75">{label}</p>
-        <p className="mt-1 break-words text-xl font-semibold tracking-normal">
-          {value}
-        </p>
-      </div>
-    </div>
+      <p className="mt-2 text-xs text-muted-foreground">{label}</p>
+      <p
+        className={
+          isIncome
+            ? "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-[#3b6d11]"
+            : "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-[#a32d2d]"
+        }
+      >
+        {value}
+      </p>
+    </article>
   );
 }
 
-function TransactionList({
-  transactions,
-  categories,
-  tags,
-}: {
-  transactions: TransactionRow[];
-  categories: CategoryOption[];
-  tags: TagOption[];
-}) {
-  const visibleTransactions = transactions.slice(0, 5);
-  const hasMoreTransactions = transactions.length > visibleTransactions.length;
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  const initials = parts
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
 
-  return (
-    <section className="rounded-lg border bg-background">
-      <div className="flex items-center gap-2 border-b p-4">
-        <CalendarDays className="size-4" />
-        <h2 className="font-semibold">Recent transactions</h2>
-      </div>
-      <div className="divide-y">
-        {visibleTransactions.length ? (
-          visibleTransactions.map((transaction) => (
-            <article
-              key={transaction.id}
-              className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center"
-            >
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: transaction.categoryColor }}
-                  />
-                  <h3 className="font-medium">{transaction.categoryName}</h3>
-                  <span className="text-sm text-muted-foreground">
-                    {transaction.date}
-                  </span>
-                </div>
-                {transaction.note ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {transaction.note}
-                  </p>
-                ) : null}
-                {transaction.place ||
-                transaction.paymentMethod ||
-                transaction.attachment ? (
-                  <div className="mt-2 flex flex-wrap gap-1 text-xs text-muted-foreground">
-                    {transaction.paymentMethod ? (
-                      <span className="rounded-md bg-muted px-2 py-0.5">
-                        {transaction.paymentMethod.replace("_", " ")}
-                      </span>
-                    ) : null}
-                    {transaction.place ? (
-                      <span className="rounded-md bg-muted px-2 py-0.5">
-                        {transaction.place}
-                      </span>
-                    ) : null}
-                    {transaction.attachment ? (
-                      <span className="rounded-md bg-muted px-2 py-0.5">
-                        {transaction.attachment.name}
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
-                {transaction.tagNames.length ? (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {transaction.tagNames.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-md bg-muted px-2 py-0.5 text-xs"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-              <div className="flex items-center justify-between gap-3 sm:justify-end">
-                <p
-                  className={
-                    transaction.type === "income"
-                      ? "font-semibold text-emerald-700"
-                      : "font-semibold text-rose-700"
-                  }
-                >
-                  {transaction.type === "income" ? "+" : "-"}
-                  {formatBDT(transaction.amountPaisa)}
-                </p>
-                <TransactionEditDrawer
-                  transaction={transaction}
-                  categories={categories}
-                  tags={tags}
-                />
-              </div>
-            </article>
-          ))
-        ) : (
-          <p className="p-6 text-sm text-muted-foreground">
-            No transactions match this view.
-          </p>
-        )}
-      </div>
-      {hasMoreTransactions ? (
-        <div className="border-t p-4">
-          <Button asChild variant="outline" className="min-h-11 w-full">
-            <Link href="/wallet/transactions">
-              See more
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
-      ) : null}
-    </section>
-  );
+  return initials || "U";
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
 }
