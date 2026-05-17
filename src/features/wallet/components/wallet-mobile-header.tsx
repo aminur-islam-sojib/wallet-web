@@ -13,8 +13,6 @@ type WalletMobileHeaderProps = {
     email: string;
     image?: string | null;
   };
-  greeting: string;
-  dateLabel: string;
 };
 
 function getRouteLabel(pathname: string) {

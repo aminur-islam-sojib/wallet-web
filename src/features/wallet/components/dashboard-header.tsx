@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth";
 import DrawerRight from "@/components/ui/Shared/Drawer";
-import MasterDialoge from "@/features/wallet/components/master-dialog";
+import MasterDialog from "@/features/wallet/components/master-dialog";
 import TransactionForm from "@/features/wallet/components/transaction-form";
 import { getDashboardData } from "@/features/wallet/server/dashboard";
 import WalletBottomNav from "@/features/wallet/components/wallet-bottom-nav";
@@ -18,15 +18,6 @@ type HeaderProps = {
 
 export default async function DashboardHeader({ searchParams }: HeaderProps) {
   const user = await requireUser();
-  const now = new Date();
-  const hour = now.getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  const dateLabel = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(now);
   const params: Record<string, string | string[] | undefined> = searchParams
     ? await searchParams
     : {};
@@ -52,11 +43,7 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
 
   return (
     <div>
-      <WalletMobileHeader
-        user={safeUser}
-        greeting={greeting}
-        dateLabel={dateLabel}
-      />
+      <WalletMobileHeader user={safeUser} />
       <div className="hidden sm:block">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div className="flex gap-3">
@@ -71,13 +58,13 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
             </div>
           </div>
           <div className="hidden gap-2 sm:flex">
-            <MasterDialoge>
+            <MasterDialog>
               <TransactionForm
                 incomeCategories={incomeCategories}
                 expenseCategories={expenseCategories}
                 tags={data.tags}
               />
-            </MasterDialoge>
+            </MasterDialog>
           </div>
         </div>
         <Separator />

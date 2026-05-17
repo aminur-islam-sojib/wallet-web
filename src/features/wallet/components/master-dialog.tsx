@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   Dialog,
@@ -12,47 +12,55 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-type AddTransactionButtonProps = {
-  children: React.ReactNode;
+type MasterDialogProps = {
+  children: ReactNode;
   buttonLabel?: string;
   title?: string;
   description?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: ReactNode;
 };
 
-const MasterDialoge: React.FC<AddTransactionButtonProps> = ({
+export default function MasterDialog({
   children,
   buttonLabel = "Add transaction",
   title = "Add transaction",
   description = "Log income or expense with category, tags, and notes.",
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  trigger,
+}: MasterDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+  const setIsOpen = isControlled
+    ? (controlledOnOpenChange ?? setInternalOpen)
+    : setInternalOpen;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>{buttonLabel}</Button>
+        {trigger ?? (
+          <Button className="rounded-xl px-5 font-medium">{buttonLabel}</Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="flex h-[90vh] w-160 max-w-[90vw] flex-col overflow-hidden p-0">
-        <DialogHeader className="shrink-0 px-4 pt-4">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+
+      <DialogContent className="flex max-h-[92vh] w-full max-w-lg flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-xl">
+        <DialogHeader className="shrink-0 border-b px-6 py-5">
+          <DialogTitle className="text-base font-semibold tracking-tight">
+            {title}
+          </DialogTitle>
+          <DialogDescription className="mt-0.5 text-sm text-muted-foreground">
+            {description}
+          </DialogDescription>
         </DialogHeader>
-        <div
-          className="min-h-0 flex-1 overflow-y-auto px-4 pb-4"
-          style={{
-            scrollbarWidth: "none" /* Firefox */,
-            msOverflowStyle: "none" /* IE / Edge legacy */,
-          }}
-        >
-          {/* Hides WebKit scrollbar (Chrome, Safari, new Edge) */}
-          <style>{`
-            .hide-scrollbar::-webkit-scrollbar { display: none; }
-          `}</style>
-          <div className="hide-scrollbar">{children}</div>
+
+        <div className="master-dialog-scroll min-h-0 flex-1 overflow-y-auto px-6 py-5">
+          {children}
         </div>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default MasterDialoge;
+}
