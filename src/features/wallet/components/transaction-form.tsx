@@ -187,7 +187,7 @@ export default function TransactionForm({
               id="tagIds"
               name="tagIds"
               multiple
-              className="min-h-[88px] w-full rounded-xl border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-shadow"
+              className="min-h-22 w-full rounded-xl border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-shadow"
             >
               {tags.map((tag) => (
                 <option key={tag.id} value={tag.id}>
@@ -200,7 +200,7 @@ export default function TransactionForm({
             </p>
           </>
         ) : (
-          <div className="flex min-h-[88px] w-full items-center justify-center rounded-xl border border-dashed bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+          <div className="flex min-h-22 w-full items-center justify-center rounded-xl border border-dashed bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
             No tags available.
           </div>
         )}
