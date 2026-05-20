@@ -6,6 +6,7 @@ import React, {
   HTMLAttributes,
   ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 type DrawerSide = "top" | "bottom" | "left" | "right";
@@ -50,9 +51,13 @@ const Drawer: React.FC<DrawerProps> = ({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onOpenChange]);
 
+  const drawer = <AnimatePresence>{open && <>{children}</>}</AnimatePresence>;
+
   return (
     <DrawerContext.Provider value={{ open, onOpenChange, side }}>
-      <AnimatePresence>{open && <>{children}</>}</AnimatePresence>
+      {typeof document === "undefined"
+        ? null
+        : createPortal(drawer, document.body)}
     </DrawerContext.Provider>
   );
 };
@@ -146,7 +151,7 @@ const DrawerContent = React.forwardRef<
   return (
     <motion.div
       ref={ref}
-      className={`fixed z-50 bg-white dark:bg-black text-gray-900 dark:text-gray-50 shadow-lg flex flex-col ${sideClasses[side]} ${className}`}
+      className={`fixed z-50 bg-white dark:bg-black text-gray-900 dark:text-gray-50 ${side === "right" ? "" : "shadow-lg"} flex flex-col ${sideClasses[side]} ${className}`}
       {...getMotionProps()}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       {...props}

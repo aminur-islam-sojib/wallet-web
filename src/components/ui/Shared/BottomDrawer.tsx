@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -18,20 +18,29 @@ type BottomDrawerProps = {
   incomeCategories: CategoryOption[];
   expenseCategories: CategoryOption[];
   tags: TagOption[];
+  renderTrigger?: (open: () => void) => ReactNode;
+  hideDefaultTrigger?: boolean;
 };
 
 export default function BottomDrawer({
   incomeCategories,
   expenseCategories,
   tags,
+  renderTrigger,
+  hideDefaultTrigger,
 }: BottomDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const openDrawer = () => setIsOpen(true);
 
   return (
     <>
-      <Button className="sm:hidden" onClick={() => setIsOpen(true)}>
-        Add transaction
-      </Button>
+      {renderTrigger ? (
+        renderTrigger(openDrawer)
+      ) : hideDefaultTrigger ? null : (
+        <Button className="sm:hidden" onClick={openDrawer}>
+          Add transaction
+        </Button>
+      )}
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="bottom">
         <DrawerOverlay />

@@ -34,6 +34,13 @@ export type TransactionRow = {
   categoryColor: string;
   tagNames: string[];
   note: string;
+  paymentMethod?: "cash" | "card" | "bank_transfer" | "bkash" | "nagad" | "rocket" | "other";
+  place?: string;
+  attachment?: {
+    name: string;
+    type: string;
+    size: number;
+  };
 };
 
 function getMonthRange(month?: string) {
@@ -125,6 +132,15 @@ export async function getDashboardData(userId: string, filters: DashboardFilters
           .map((tagId) => tagById.get(tagId.toString())?.name)
           .filter((name): name is string => Boolean(name)),
         note: transaction.note ?? "",
+        paymentMethod: transaction.paymentMethod ?? undefined,
+        place: transaction.place ?? undefined,
+        attachment: transaction.attachment?.name
+          ? {
+              name: transaction.attachment.name,
+              type: transaction.attachment.type ?? "",
+              size: transaction.attachment.size ?? 0,
+            }
+          : undefined,
       };
     }),
   };

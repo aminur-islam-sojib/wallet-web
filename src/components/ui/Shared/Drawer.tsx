@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import {
   Drawer,
   DrawerOverlay,
@@ -12,22 +14,35 @@ import {
 } from "./Drawe";
 import Link from "next/link";
 import LogoutButton from "@/components/Auth/logout-button";
+import { cn } from "@/lib/utils";
+import { WALLET_NAV_ITEMS } from "./wallet-nav";
+import { ListTodo } from "lucide-react";
 type AccountDrawerProps = {
   user: {
     name: string;
     email: string;
     image?: string | null;
   };
+  renderTrigger?: (open: () => void, isOpen: boolean) => ReactNode;
 };
 
-export default function DrawerRight({ user }: AccountDrawerProps) {
+export default function DrawerRight({
+  user,
+  renderTrigger,
+}: AccountDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const openDrawer = () => setIsOpen(true);
 
   return (
     <>
-      <Button variant="outline" onClick={() => setIsOpen(true)}>
-        Account
-      </Button>
+      {renderTrigger ? (
+        renderTrigger(openDrawer, isOpen)
+      ) : (
+        <Button variant="outline" onClick={openDrawer}>
+          <ListTodo />
+        </Button>
+      )}
 
       <Drawer open={isOpen} onOpenChange={setIsOpen} side="right">
         <DrawerOverlay />
@@ -57,20 +72,42 @@ export default function DrawerRight({ user }: AccountDrawerProps) {
             </div>
 
             <div className="grid gap-2 text-sm">
-              <Link
-                href="/wallet"
-                className="rounded-md border px-3 py-2 hover:bg-muted"
-              >
-                Wallet dashboard
-              </Link>
-              <Link
-                href="/health"
-                className="rounded-md border px-3 py-2 hover:bg-muted"
-              >
-                Health tracker
-              </Link>
-              <div className="rounded-md border px-3 py-2 text-muted-foreground">
-                Settings (coming soon)
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Wallet navigation
+              </p>
+              {WALLET_NAV_ITEMS.map((item) => {
+                const isActive =
+                  item.href === "/wallet"
+                    ? pathname === "/wallet"
+                    : pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    className={cn(
+                      "pressable-soft nav-active-transition rounded-md border px-3 py-2 text-sm justify-center",
+                      isActive
+                        ? "border-foreground/30 bg-foreground text-background"
+                        : "hover:bg-muted",
+                    )}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              <div className="mt-4 grid gap-2">
+                <Link
+                  href="/health"
+                  className="pressable-soft nav-active-transition rounded-md border px-3 py-2 text-sm hover:bg-muted"
+                >
+                  Health tracker
+                </Link>
+                <div className="  rounded-md border px-3 py-2 text-muted-foreground">
+                  Settings (coming soon)
+                </div>
               </div>
             </div>
           </div>

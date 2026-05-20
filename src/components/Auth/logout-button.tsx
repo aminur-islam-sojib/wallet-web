@@ -25,7 +25,7 @@ export default function LogoutButton() {
     <div>
       <Button
         onClick={() => setIsLogoutOpen(true)}
-        className="bg-orange-500 hover:bg-orange-600"
+        className="bg-orange-500 hover:bg-orange-600 px-3 py-5"
       >
         Logout
       </Button>

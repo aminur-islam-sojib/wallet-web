@@ -21,7 +21,7 @@ type AddTransactionButtonProps = {
 
 const MasterDialoge: React.FC<AddTransactionButtonProps> = ({
   children,
-  buttonLabel = "Add transaction",
+  buttonLabel = "Add transaction ad",
   title = "Add transaction",
   description = "Log income or expense with category, tags, and notes.",
 }) => {

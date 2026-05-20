@@ -160,8 +160,8 @@ const Register: React.FC = () => {
       return;
     }
 
-    setSignupError(null);
     startSignin(async () => {
+      setSignupError(null);
       const result = await signIn("credentials", {
         email,
         password,
