@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -16,7 +16,8 @@ import Link from "next/link";
 import LogoutButton from "@/components/Auth/logout-button";
 import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "./wallet-nav";
-import { ListTodo } from "lucide-react";
+import { ListTodo, Moon, Sun } from "lucide-react";
+import ThemeToggleButton from "@/features/Theme/theme-toggle-button";
 type AccountDrawerProps = {
   user: {
     name: string;
@@ -70,6 +71,7 @@ export default function DrawerRight({
                 <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
             </div>
+            <ThemeToggleButton />
 
             <div className="grid gap-2 text-sm">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
