@@ -1,8 +1,9 @@
 import { requireUser } from "@/lib/auth";
 import { Category } from "@/features/wallet/server/models/category";
 import { Tag } from "@/features/wallet/server/models/tag";
-import WalletMoreManager from "@/features/wallet/categories/components/wallet-more-manager";
+
 import type { CategoryOption, TagOption } from "@/features/wallet/types";
+import WalletMoreManager from "@/features/wallet/categories/components/wallet-more-manager";
 
 export default async function WalletMorePage() {
   const user = await requireUser();
@@ -27,7 +28,7 @@ export default async function WalletMorePage() {
 
   return (
     <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-5xl px-4  sm:px-6 lg:px-8">
         <WalletMoreManager categories={categoryOptions} tags={tagOptions} />
       </div>
     </main>
