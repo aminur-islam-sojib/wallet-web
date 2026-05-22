@@ -9,13 +9,10 @@ import {
 } from "lucide-react";
 
 import TransactionEditDrawer from "@/features/wallet/components/transaction-edit-drawer";
+import { CategoryIcon } from "@/features/wallet/components/category-icon";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
-import type {
-  CategoryOption,
-  TagOption,
-  TransactionRow,
-} from "@/types/wallet";
+import type { CategoryOption, TagOption, TransactionRow } from "@/types/wallet";
 
 type WalletDashboardTransactionsProps = {
   transactions: TransactionRow[];
@@ -98,6 +95,9 @@ function TransactionCard({
   const isIncome = transaction.type === "income";
   const title = transaction.note || transaction.categoryName;
   const meta = `${transaction.date} · ${isIncome ? "Income" : transaction.categoryName}`;
+  const category = categories.find(
+    (item) => item.id === transaction.categoryId,
+  );
 
   return (
     <article className="flex items-center gap-3 rounded-xl border border-border/70 bg-background px-3 py-2.5 shadow-sm">
@@ -108,7 +108,7 @@ function TransactionCard({
             : "grid size-10 shrink-0 place-items-center rounded-xl bg-[#faeeda] text-[#854f0b]"
         }
       >
-        {getTransactionIcon(transaction)}
+        {getTransactionIcon(transaction, category)}
       </span>
 
       <div className="min-w-0 flex-1">
@@ -139,7 +139,14 @@ function TransactionCard({
   );
 }
 
-function getTransactionIcon(transaction: TransactionRow) {
+function getTransactionIcon(
+  transaction: TransactionRow,
+  category?: CategoryOption,
+) {
+  if (category?.icon) {
+    return <CategoryIcon icon={category.icon} iconClassName="size-5" />;
+  }
+
   const name = transaction.categoryName.toLowerCase();
 
   if (transaction.type === "income") {

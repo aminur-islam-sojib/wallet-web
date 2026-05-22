@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDateInputValue } from "@/lib/date";
 import { createTransaction } from "@/features/wallet/server/actions";
+import { CategoryIcon } from "@/features/wallet/components/category-icon";
 import type {
   CategoryOption,
   PaymentMethod,
@@ -399,9 +400,17 @@ function CategoryDrawer({
                     aria-label={`Select ${category.name}`}
                   >
                     <span
-                      className="size-3 rounded-full"
-                      style={{ backgroundColor: category.color }}
-                    />
+                      className="grid size-8 place-items-center rounded-full border"
+                      style={{
+                        borderColor: category.color,
+                        color: category.color,
+                      }}
+                    >
+                      <CategoryIcon
+                        icon={category.icon}
+                        iconClassName="size-4"
+                      />
+                    </span>
                     {category.name}
                   </button>
                 ))}
@@ -434,9 +443,17 @@ function CategoryDrawer({
                   >
                     <span className="flex items-center gap-2">
                       <span
-                        className="size-3 rounded-full"
-                        style={{ backgroundColor: category.color }}
-                      />
+                        className="grid size-8 place-items-center rounded-full border"
+                        style={{
+                          borderColor: category.color,
+                          color: category.color,
+                        }}
+                      >
+                        <CategoryIcon
+                          icon={category.icon}
+                          iconClassName="size-4"
+                        />
+                      </span>
                       {category.name}
                     </span>
                     {selectedCategoryId === category.id ? (

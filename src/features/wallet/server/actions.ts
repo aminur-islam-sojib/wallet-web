@@ -9,6 +9,7 @@ import { Category } from "@/models/category";
 import { MonthlyLimit } from "@/models/monthly-limit";
 import { Tag } from "@/models/tag";
 import { Transaction } from "@/models/transaction";
+import { categoryIconIds } from "@/features/wallet/lib/category-icons";
 
 const amountSchema = z
   .string()
@@ -50,6 +51,7 @@ const categorySchema = z.object({
     .string()
     .trim()
     .regex(/^#[0-9a-fA-F]{6}$/),
+  icon: z.enum(categoryIconIds),
 });
 
 const categoryUpdateSchema = z.object({
@@ -59,6 +61,7 @@ const categoryUpdateSchema = z.object({
     .string()
     .trim()
     .regex(/^#[0-9a-fA-F]{6}$/),
+  icon: z.enum(categoryIconIds),
 });
 
 const categoryDeleteSchema = z.object({
@@ -88,6 +91,13 @@ const monthlyLimitSchema = z.object({
   amount: amountSchema,
 });
 
+function revalidateWalletViews() {
+  revalidatePath("/(dashboard)", "layout");
+  revalidatePath("/wallet");
+  revalidatePath("/wallet/transactions");
+  revalidatePath("/wallet/more");
+}
+
 export async function saveMonthlyLimit(
   _previousState: MonthlyLimitActionState,
   formData: FormData,
@@ -113,7 +123,7 @@ export async function saveMonthlyLimit(
       { upsert: true },
     );
 
-    revalidatePath("/wallet");
+    revalidateWalletViews();
 
     return { success: true, message: "Monthly limit saved." };
   } catch (error) {
@@ -127,7 +137,9 @@ export async function saveMonthlyLimit(
     return {
       success: false,
       message:
-        error instanceof Error ? error.message : "Could not save monthly limit.",
+        error instanceof Error
+          ? error.message
+          : "Could not save monthly limit.",
     };
   }
 }
@@ -183,7 +195,7 @@ export async function createTransaction(formData: FormData) {
       : undefined,
   });
 
-  revalidatePath("/wallet");
+  revalidateWalletViews();
 }
 
 export async function updateTransaction(formData: FormData) {
@@ -260,8 +272,7 @@ export async function updateTransaction(formData: FormData) {
     },
   );
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/transactions");
+  revalidateWalletViews();
 }
 
 export async function createCategory(formData: FormData) {
@@ -270,6 +281,7 @@ export async function createCategory(formData: FormData) {
     name: formData.get("name"),
     type: formData.get("type"),
     color: formData.get("color") || "#64748b",
+    icon: formData.get("icon") || "circle",
   });
 
   await Category.updateOne(
@@ -280,15 +292,14 @@ export async function createCategory(formData: FormData) {
         name: parsed.name,
         type: parsed.type,
         color: parsed.color,
-        icon: "circle",
+        icon: parsed.icon,
         isDefault: false,
       },
     },
     { upsert: true },
   );
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }
 
 export async function createTag(formData: FormData) {
@@ -308,8 +319,7 @@ export async function createTag(formData: FormData) {
     { upsert: true },
   );
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }
 
 export async function updateCategory(formData: FormData) {
@@ -318,6 +328,7 @@ export async function updateCategory(formData: FormData) {
     id: formData.get("id"),
     name: formData.get("name"),
     color: formData.get("color"),
+    icon: formData.get("icon") || "circle",
   });
 
   const category = await Category.findOne({
@@ -335,12 +346,12 @@ export async function updateCategory(formData: FormData) {
       $set: {
         name: parsed.name,
         color: parsed.color,
+        icon: parsed.icon,
       },
     },
   );
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }
 
 export async function deleteCategory(formData: FormData) {
@@ -373,8 +384,7 @@ export async function deleteCategory(formData: FormData) {
 
   await Category.deleteOne({ _id: category._id });
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }
 
 export async function updateTag(formData: FormData) {
@@ -392,8 +402,7 @@ export async function updateTag(formData: FormData) {
 
   await Tag.updateOne({ _id: tag._id }, { $set: { name: parsed.name } });
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }
 
 export async function deleteTag(formData: FormData) {
@@ -419,6 +428,5 @@ export async function deleteTag(formData: FormData) {
 
   await Tag.deleteOne({ _id: tag._id });
 
-  revalidatePath("/wallet");
-  revalidatePath("/wallet/more");
+  revalidateWalletViews();
 }

@@ -121,7 +121,7 @@ export async function getDashboardData(
         name: category.name,
         type: category.type as "income" | "expense",
         color: category.color,
-        icon: category.icon,
+        icon: category.icon ?? "circle",
         isDefault: category.isDefault,
       }),
     ),

@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { CategoryIcon } from "@/features/wallet/components/category-icon";
+import { CategoryIconPicker } from "@/features/wallet/components/category-icon-picker";
+import type { CategoryIconId } from "@/features/wallet/lib/category-icons";
 import {
   createCategory,
   createTag,
@@ -29,6 +32,7 @@ type CategoryEditState = {
   id: string;
   name: string;
   color: string;
+  icon: CategoryIconId;
 };
 
 type TagEditState = {
@@ -44,6 +48,7 @@ export default function WalletMoreManager({
   const categoryFormRef = useRef<HTMLFormElement>(null);
   const tagFormRef = useRef<HTMLFormElement>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [createIcon, setCreateIcon] = useState<CategoryIconId>("circle");
   const [categoryEdit, setCategoryEdit] = useState<CategoryEditState | null>(
     null,
   );
@@ -73,6 +78,7 @@ export default function WalletMoreManager({
 
     await runAction(createCategory, formData, "Category added.", () => {
       categoryFormRef.current?.reset();
+      setCreateIcon("circle");
     });
   }
 
@@ -210,6 +216,7 @@ export default function WalletMoreManager({
               />
             </div>
           </div>
+          <CategoryIconPicker value={createIcon} onChange={setCreateIcon} />
           <Button type="submit" className="min-h-11" size="lg">
             Add category
           </Button>
@@ -229,9 +236,14 @@ export default function WalletMoreManager({
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <span
-                        className="size-3 rounded-full"
-                        style={{ backgroundColor: category.color }}
-                      />
+                        className="grid size-8 place-items-center rounded-full border"
+                        style={{
+                          borderColor: category.color,
+                          color: category.color,
+                        }}
+                      >
+                        <CategoryIcon icon={category.icon} />
+                      </span>
                       <p className="text-base font-semibold">{category.name}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -266,21 +278,32 @@ export default function WalletMoreManager({
                           className="min-h-11 w-full rounded-lg border bg-background px-3 text-base"
                         />
                       </div>
-                      <div className="grid gap-2">
-                        <label className="text-sm font-medium">Color</label>
-                        <input
-                          type="color"
-                          name="color"
-                          value={editState.color}
-                          onChange={(event) =>
-                            setCategoryEdit({
-                              ...editState,
-                              color: event.target.value,
-                            })
-                          }
-                          className="min-h-11 w-full rounded-lg border bg-background p-1"
-                        />
+                      <div className="grid gap-2 sm:grid-cols-[1fr_140px]">
+                        <div className="grid gap-2">
+                          <label className="text-sm font-medium">Color</label>
+                          <input
+                            type="color"
+                            name="color"
+                            value={editState.color}
+                            onChange={(event) =>
+                              setCategoryEdit({
+                                ...editState,
+                                color: event.target.value,
+                              })
+                            }
+                            className="min-h-11 w-full rounded-lg border bg-background p-1"
+                          />
+                        </div>
                       </div>
+                      <CategoryIconPicker
+                        value={editState.icon}
+                        onChange={(value) =>
+                          setCategoryEdit({
+                            ...editState,
+                            icon: value,
+                          })
+                        }
+                      />
                       <div className="flex flex-wrap gap-2">
                         <Button type="submit" className="min-h-11" size="lg">
                           Save
@@ -308,6 +331,7 @@ export default function WalletMoreManager({
                             id: category.id,
                             name: category.name,
                             color: category.color,
+                            icon: category.icon as CategoryIconId,
                           })
                         }
                       >

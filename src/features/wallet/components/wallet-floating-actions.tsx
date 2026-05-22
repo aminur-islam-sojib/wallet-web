@@ -40,7 +40,7 @@ export default function WalletFloatingActions({
 
   return (
     <>
-      <motion.div className="fixed bottom-[calc(env(safe-area-inset-bottom)+104px)] right-4 z-[45] sm:hidden">
+      <motion.div className="fixed bottom-[calc(env(safe-area-inset-bottom)+104px)] right-4 z-45 sm:hidden">
         <AnimatePresence>
           {menuOpen ? (
             <motion.div

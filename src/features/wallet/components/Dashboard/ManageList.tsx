@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { CategoryOption, TagOption } from "@/types";
 import { Tags } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CategoryIcon } from "@/features/wallet/components/category-icon";
 import { createCategory, createTag } from "../../server/actions";
 
 export default function ManageLists({
@@ -66,9 +67,10 @@ export default function ManageLists({
             {categories.map((category) => (
               <span
                 key={category.id}
-                className="rounded-md border px-2 py-1"
-                style={{ borderColor: category.color }}
+                className="inline-flex items-center gap-2 rounded-md border px-2 py-1"
+                style={{ borderColor: category.color, color: category.color }}
               >
+                <CategoryIcon icon={category.icon} iconClassName="size-4" />
                 {category.name}
               </span>
             ))}
