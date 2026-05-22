@@ -28,3 +28,40 @@ export type TransactionRow = {
     size: number;
   };
 };
+
+export type TransactionsCategoryOption = {
+  id: string;
+  name: string;
+  type: TransactionType;
+  color: string;
+  icon: string;
+  isDefault: boolean;
+};
+
+export type TransactionsTagOption = {
+  id: string;
+  name: string;
+};
+
+export type TransactionsFilters = {
+  month?: string;
+  type?: "all" | TransactionType;
+  categoryId?: string;
+  tagId?: string;
+};
+
+export type TransactionsPagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+export type TransactionsPageData = {
+  selectedMonth: string;
+  categories: TransactionsCategoryOption[];
+  tags: TransactionsTagOption[];
+  transactions: TransactionRow[];
+  pagination: TransactionsPagination;
+  filters: TransactionsFilters;
+};

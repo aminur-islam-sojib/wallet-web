@@ -179,3 +179,20 @@ export async function updateTransaction(formData: FormData) {
 
   revalidateWalletViews();
 }
+
+export async function deleteTransaction(formData: FormData) {
+  const user = await requireUser();
+  const id = z.string().trim().min(1).parse(formData.get("id"));
+
+  const transaction = await Transaction.findOne({
+    _id: id,
+    userId: user._id,
+  }).select("_id");
+
+  if (!transaction) {
+    throw new Error("Transaction not found.");
+  }
+
+  await Transaction.deleteOne({ _id: transaction._id, userId: user._id });
+  revalidateWalletViews();
+}

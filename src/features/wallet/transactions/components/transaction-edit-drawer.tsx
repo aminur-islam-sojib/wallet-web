@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { updateTransaction } from "@/features/wallet/server/transactions";
 import type {
-  CategoryOption,
   PaymentMethod,
-  TagOption,
   TransactionRow,
   TransactionType,
-} from "@/features/wallet/types";
+  TransactionsCategoryOption,
+  TransactionsTagOption,
+} from "@/features/wallet/transactions/types";
 
 const paymentOptions: { value: PaymentMethod; label: string }[] = [
   { value: "cash", label: "Cash" },
@@ -34,8 +34,8 @@ type AttachmentMeta = {
 
 type TransactionEditDrawerProps = {
   transaction: TransactionRow;
-  categories: CategoryOption[];
-  tags: TagOption[];
+  categories: TransactionsCategoryOption[];
+  tags: TransactionsTagOption[];
 };
 
 export default function TransactionEditDrawer({

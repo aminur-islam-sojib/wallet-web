@@ -12,7 +12,11 @@ import TransactionEditDrawer from "@/features/wallet/transactions/components/tra
 import { CategoryIcon } from "@/features/wallet/categories/components/category-icon";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/money";
-import type { CategoryOption, TagOption, TransactionRow } from "@/features/wallet/types";
+import type {
+  CategoryOption,
+  TagOption,
+  TransactionRow,
+} from "@/features/wallet/types";
 
 type WalletDashboardTransactionsProps = {
   transactions: TransactionRow[];
