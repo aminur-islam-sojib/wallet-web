@@ -485,7 +485,7 @@ function CategoryDrawer({
 
         <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-5 pb-8 pt-5">
           <section className="grid gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--calc-subtle)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--calc-subtle)">
               Recent
             </p>
             {recentCategories.length ? (
@@ -498,8 +498,8 @@ function CategoryDrawer({
                     className={cn(
                       "flex min-h-11 shrink-0 items-center gap-2 rounded-xl border px-3 text-sm",
                       selectedCategoryId === category.id
-                        ? "border-[var(--calc-accent)] bg-[var(--calc-surface-2)] text-[var(--calc-text)]"
-                        : "border-[var(--calc-border)] bg-[var(--calc-surface)] text-[var(--calc-text)]",
+                        ? "border-(--calc-accent) bg-(--calc-surface-2) text-(--calc-text)"
+                        : "border-(--calc-border) bg-(--calc-surface) text-(--calc-text)",
                     )}
                     aria-label={`Select ${category.name}`}
                   >
@@ -606,8 +606,8 @@ function CalculatorPad({
     "2",
     "3",
     "=",
-    "0",
     ".",
+    "0",
   ];
 
   return (
@@ -644,7 +644,7 @@ function CalculatorPad({
       <button
         type="submit"
         disabled={!canSave}
-        className="col-span-2 flex min-h-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--calc-income)] to-[var(--calc-income-strong)] px-4 text-base font-semibold text-[var(--calc-income-text)] transition active:scale-[0.97] disabled:opacity-40"
+        className="col-span-4 flex min-h-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--calc-income)] to-[var(--calc-income-strong)] px-4 text-base font-semibold text-[var(--calc-income-text)] transition active:scale-[0.97] disabled:opacity-40"
       >
         {isSaving ? "Saving..." : "Save"}
       </button>
