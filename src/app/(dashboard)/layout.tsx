@@ -1,4 +1,4 @@
-import Header from "@/features/wallet/components/dashboard-header";
+import Header from "@/features/wallet/navigation/components/dashboard-header";
 import type { ReactNode } from "react";
 
 export default async function DashboardLayout({

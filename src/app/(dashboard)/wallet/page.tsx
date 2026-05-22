@@ -1,7 +1,7 @@
-import { Dashboard } from "@/features/wallet/components/dashboard";
+import { Dashboard } from "@/features/wallet/dashboard/components/dashboard";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData } from "@/features/wallet/server/dashboard";
-import type { DashboardFilters } from "@/types/wallet";
+import type { DashboardFilters } from "@/features/wallet/types";
 
 type DashboardPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

@@ -1,31 +1,49 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Moon, Sun } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
+
+type ThemePreference = "light" | "dark";
+
+function getThemePreference(): ThemePreference {
+  if (typeof window === "undefined") return "light";
+
+  const stored = window.localStorage.getItem("theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  if (stored === "light" || stored === "dark") return stored;
+  return prefersDark ? "dark" : "light";
+}
+
+function subscribeToThemePreference(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener("themechange", onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener("themechange", onStoreChange);
+  };
+}
 
 export default function ThemeToggleButton() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  useEffect(() => {
-    const root = document.documentElement;
-    const stored = window.localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    const nextTheme =
-      stored === "light" || stored === "dark"
-        ? stored
-        : prefersDark
-          ? "dark"
-          : "light";
+  const theme = useSyncExternalStore(
+    subscribeToThemePreference,
+    getThemePreference,
+    () => "light",
+  );
 
-    root.classList.toggle("dark", nextTheme === "dark");
-    setTheme(nextTheme);
-  }, []);
-  function setThemePreference(nextTheme: "light" | "dark") {
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  function setThemePreference(nextTheme: ThemePreference) {
     const root = document.documentElement;
     root.classList.toggle("dark", nextTheme === "dark");
     window.localStorage.setItem("theme", nextTheme);
-    setTheme(nextTheme);
+    window.dispatchEvent(new Event("themechange"));
   }
+
   return (
     <div className="grid gap-3 rounded-lg border p-4">
       <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">

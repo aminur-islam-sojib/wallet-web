@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -15,8 +15,8 @@ import {
 import Link from "next/link";
 import LogoutButton from "@/components/Auth/logout-button";
 import { cn } from "@/lib/utils";
-import { WALLET_NAV_ITEMS } from "./wallet-nav";
-import { ListTodo, Moon, Sun } from "lucide-react";
+import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/lib/wallet-nav";
+import { ListTodo } from "lucide-react";
 import ThemeToggleButton from "@/features/Theme/theme-toggle-button";
 type AccountDrawerProps = {
   user: {

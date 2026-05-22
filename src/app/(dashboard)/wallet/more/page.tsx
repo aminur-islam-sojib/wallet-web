@@ -1,8 +1,8 @@
 import { requireUser } from "@/lib/auth";
-import { Category } from "@/models/category";
-import { Tag } from "@/models/tag";
-import WalletMoreManager from "@/features/wallet/components/wallet-more-manager";
-import type { CategoryOption, TagOption } from "@/types/wallet";
+import { Category } from "@/features/wallet/server/models/category";
+import { Tag } from "@/features/wallet/server/models/tag";
+import WalletMoreManager from "@/features/wallet/categories/components/wallet-more-manager";
+import type { CategoryOption, TagOption } from "@/features/wallet/types";
 
 export default async function WalletMorePage() {
   const user = await requireUser();

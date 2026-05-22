@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
-import { Category } from "@/models/category";
-import { MonthlyLimit } from "@/models/monthly-limit";
-import { Tag } from "@/models/tag";
-import { Transaction } from "@/models/transaction";
+import { Category } from "@/features/wallet/server/models/category";
+import { MonthlyLimit } from "@/features/wallet/server/models/monthly-limit";
+import { Tag } from "@/features/wallet/server/models/tag";
+import { Transaction } from "@/features/wallet/server/models/transaction";
 import {
   dateInputValueToUtcRange,
   formatDateInputValueInTimeZone,
@@ -15,7 +15,7 @@ import type {
   TagOption,
   TodaySummary,
   TransactionRow,
-} from "@/types/wallet";
+} from "@/features/wallet/types";
 
 const WALLET_TIME_ZONE = "Asia/Dhaka";
 
