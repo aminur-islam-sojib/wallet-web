@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
 import { Edit3, FileUp, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { updateTransaction } from "@/features/wallet/server/transactions";
+import {
+  deleteTransaction,
+  updateTransaction,
+} from "@/features/wallet/server/transactions";
 import type {
   PaymentMethod,
   TransactionRow,
@@ -36,12 +39,16 @@ type TransactionEditDrawerProps = {
   transaction: TransactionRow;
   categories: TransactionsCategoryOption[];
   tags: TransactionsTagOption[];
+  trigger?: ReactNode;
+  triggerAriaLabel?: string;
 };
 
 export default function TransactionEditDrawer({
   transaction,
   categories,
   tags,
+  trigger,
+  triggerAriaLabel,
 }: TransactionEditDrawerProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -59,13 +66,17 @@ export default function TransactionEditDrawer({
     transaction.attachment ?? null,
   );
   const [error, setError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const typeCategories = useMemo(
     () => categories.filter((category) => category.type === type),
     [categories, type],
   );
   const canSave = Boolean(amount && categoryId && date);
+  const displayName = transaction.note || transaction.categoryName;
+  const fallbackTriggerLabel = `Open ${displayName} transaction`;
 
   function selectType(nextType: TransactionType) {
     const nextCategories = categories.filter(
@@ -86,6 +97,7 @@ export default function TransactionEditDrawer({
 
   async function handleAction(formData: FormData) {
     setError("");
+    setDeleteError("");
 
     if (!canSave) {
       setError("Amount, date, and category are required.");
@@ -108,18 +120,64 @@ export default function TransactionEditDrawer({
     }
   }
 
+  async function handleDelete() {
+    if (!window.confirm(`Delete "${displayName}"? This cannot be undone.`)) {
+      return;
+    }
+
+    setError("");
+    setDeleteError("");
+    setDeleting(true);
+
+    try {
+      const formData = new FormData();
+      formData.set("id", transaction.id);
+      await deleteTransaction(formData);
+      router.refresh();
+      setOpen(false);
+    } catch (caught) {
+      setDeleteError(
+        caught instanceof Error
+          ? caught.message
+          : "Could not delete this transaction.",
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  const triggerNode = trigger ? (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setOpen(true)}
+      onKeyDown={(event: KeyboardEvent) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setOpen(true);
+        }
+      }}
+      className="w-full text-left"
+      aria-label={triggerAriaLabel ?? fallbackTriggerLabel}
+    >
+      {trigger}
+    </div>
+  ) : null;
+
   return (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        size="icon-lg"
-        onClick={() => setOpen(true)}
-        aria-label={`Edit ${transaction.categoryName} transaction`}
-        className="min-h-11 min-w-11"
-      >
-        <Edit3 className="size-4" />
-      </Button>
+      {triggerNode ?? (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-lg"
+          onClick={() => setOpen(true)}
+          aria-label={`Edit ${transaction.categoryName} transaction`}
+          className="min-h-11 min-w-11"
+        >
+          <Edit3 className="size-4" />
+        </Button>
+      )}
 
       <div
         className={cn(
@@ -333,6 +391,9 @@ export default function TransactionEditDrawer({
             </Field>
 
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
+            {deleteError ? (
+              <p className="text-sm text-destructive">{deleteError}</p>
+            ) : null}
           </div>
 
           <div className="border-t p-4">
@@ -342,6 +403,15 @@ export default function TransactionEditDrawer({
               className="min-h-11 w-full"
             >
               {saving ? "Saving..." : "Save changes"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="mt-3 min-h-11 w-full border-destructive/40 text-destructive"
+            >
+              {deleting ? "Deleting..." : "Delete transaction"}
             </Button>
           </div>
         </form>
