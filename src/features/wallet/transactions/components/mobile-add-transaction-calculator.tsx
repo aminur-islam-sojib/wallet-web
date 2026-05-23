@@ -274,19 +274,6 @@ export default function MobileAddTransactionCalculator({
       ))}
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-(--calc-subtle)">
-            Add Transaction
-          </div>
-          <button
-            type="button"
-            className="flex size-10 items-center justify-center rounded-xl border border-(--calc-border) bg-(--calc-surface-2) text-(--calc-muted) transition hover:bg-(--calc-surface-3)"
-            aria-label="Transaction history"
-          >
-            <CalendarDays className="size-5" />
-          </button>
-        </div>
-
         <div className="grid min-h-11 grid-cols-2 gap-2">
           {(["expense", "income"] as const).map((item) => (
             <button
@@ -475,7 +462,7 @@ function CategoryDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-lg border border-(--calc-border) bg-(--calc-surface-2) text-[var(--calc-muted)]"
+            className="flex size-9 items-center justify-center rounded-lg border border-(--calc-border) bg-(--calc-surface-2) text-(--calc-muted)"
             aria-label="Close category drawer"
           >
             <X className="size-4" />
@@ -519,14 +506,14 @@ function CategoryDrawer({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[var(--calc-muted)]">
+              <p className="text-sm text-(--calc-muted)">
                 None selected yet.
               </p>
             )}
           </section>
 
           <section className="grid gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--calc-subtle)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--calc-subtle)">
               All categories
             </p>
             {categories.length ? (
@@ -539,8 +526,8 @@ function CategoryDrawer({
                     className={cn(
                       "flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 text-sm",
                       selectedCategoryId === category.id
-                        ? "border-[var(--calc-accent)] bg-[var(--calc-surface-2)] text-[var(--calc-text)]"
-                        : "border-[var(--calc-border)] bg-[var(--calc-surface)] text-[var(--calc-text)]",
+                        ? "border-(--calc-accent) bg-(--calc-surface-2) text-(--calc-text)"
+                        : "border-(--calc-border) bg-(--calc-surface) text-(--calc-text)",
                     )}
                     aria-label={`Select ${category.name}`}
                   >
@@ -560,7 +547,7 @@ function CategoryDrawer({
                       {category.name}
                     </span>
                     {selectedCategoryId === category.id ? (
-                      <span className="text-xs font-semibold text-[var(--calc-accent-2)]">
+                      <span className="text-xs font-semibold text-(--calc-accent-2)">
                         Selected
                       </span>
                     ) : null}
@@ -568,7 +555,7 @@ function CategoryDrawer({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[var(--calc-muted)]">
+              <p className="text-sm text-(--calc-muted)">
                 Add a category first.
               </p>
             )}
@@ -643,7 +630,7 @@ function CalculatorPad({
       <button
         type="submit"
         disabled={!canSave}
-        className="col-span-4 flex min-h-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--calc-income)] to-[var(--calc-income-strong)] px-4 text-base font-semibold text-[var(--calc-income-text)] transition active:scale-[0.97] disabled:opacity-40"
+        className="col-span-4 flex min-h-16 items-center justify-center rounded-2xl bg-linear-to-br from-(--calc-income) to-(--calc-income-strong) px-4 text-base font-semibold text-(--calc-income-text) transition active:scale-[0.97] disabled:opacity-40"
       >
         {isSaving ? "Saving..." : "Save"}
       </button>
@@ -695,20 +682,20 @@ function DetailsDrawer({
       />
       <aside
         className={cn(
-          "fixed inset-x-0 bottom-0 z-70 flex max-h-[86vh] flex-col rounded-t-[22px] border-t border-[var(--calc-border)] bg-[var(--calc-surface)] transition-transform duration-300",
+          "fixed inset-x-0 bottom-0 z-70 flex max-h-[86vh] flex-col rounded-t-[22px] border-t border-(--calc-border) bg-(--calc-surface) transition-transform duration-300",
           open ? "translate-y-0" : "translate-y-full",
         )}
         aria-hidden={!open}
       >
-        <div className="mt-3 h-1 w-10 self-center rounded-full bg-[var(--calc-border-strong)]" />
-        <div className="flex items-center justify-between border-b border-[var(--calc-border)] px-5 py-4">
-          <h2 className="text-base font-semibold text-[var(--calc-text)]">
+        <div className="mt-3 h-1 w-10 self-center rounded-full bg-(--calc-border-strong)" />
+        <div className="flex items-center justify-between border-b border-(--calc-border) px-5 py-4">
+          <h2 className="text-base font-semibold text-(--calc-text)">
             Details
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-lg border border-[var(--calc-border)] bg-[var(--calc-surface-2)] text-[var(--calc-muted)]"
+            className="flex size-9 items-center justify-center rounded-lg border border-(--calc-border) bg-(--calc-surface-2) text-(--calc-muted)"
             aria-label="Close details"
           >
             <X className="size-4" />
@@ -716,22 +703,22 @@ function DetailsDrawer({
         </div>
 
         <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto px-5 py-5">
-          <label className="grid gap-2 text-sm font-semibold text-[var(--calc-muted)]">
-            <span className="flex items-center gap-2 text-[var(--calc-muted)]">
-              <span className="text-[var(--calc-muted)]">Note</span>
+          <label className="grid gap-2 text-sm font-semibold text-(--calc-muted)">
+            <span className="flex items-center gap-2 text-(--calc-muted)">
+              <span className="text-(--calc-muted)">Note</span>
             </span>
             <textarea
               value={note}
               onChange={(event) => onNoteChange(event.target.value)}
               maxLength={240}
               rows={4}
-              className="min-h-24 w-full resize-none rounded-xl border border-[var(--calc-border)] bg-[var(--calc-surface-2)] px-3 py-3 text-sm font-normal text-[var(--calc-text)] outline-none transition focus:border-[var(--calc-accent)]"
+              className="min-h-24 w-full resize-none rounded-xl border border-(--calc-border) bg-(--calc-surface-2) px-3 py-3 text-sm font-normal text-(--calc-text) outline-none transition focus:border-(--calc-accent)"
               placeholder="Optional note"
             />
           </label>
 
           <section className="grid gap-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--calc-muted)]">
+            <div className="flex items-center gap-2 text-sm font-semibold text-(--calc-muted)">
               <Tags className="size-4" />
               <span>Labels</span>
             </div>
@@ -745,22 +732,22 @@ function DetailsDrawer({
                     className={cn(
                       "min-h-9 rounded-full border px-3 text-sm",
                       selectedTagIds.includes(tag.id)
-                        ? "border-[var(--calc-accent)] bg-[color-mix(in_srgb,var(--calc-accent)_15%,transparent)] text-[var(--calc-accent-2)]"
-                        : "border-[var(--calc-border)] bg-[var(--calc-surface-2)] text-[var(--calc-muted)]",
+                        ? "border-(--calc-accent) bg-[color-mix(in_srgb,var(--calc-accent)_15%,transparent)] text-(--calc-accent-2)"
+                        : "border-(--calc-border) bg-(--calc-surface-2) text-(--calc-muted)",
                     )}
                   >
                     {tag.name}
                   </button>
                 ))
               ) : (
-                <p className="text-sm text-[var(--calc-muted)]">
+                <p className="text-sm text-(--calc-muted)">
                   No labels yet.
                 </p>
               )}
             </div>
           </section>
 
-          <label className="grid gap-2 text-sm font-semibold text-[var(--calc-muted)]">
+          <label className="grid gap-2 text-sm font-semibold text-(--calc-muted)">
             <span className="flex items-center gap-2">
               <CalendarDays className="size-4" />
               Date
@@ -769,12 +756,12 @@ function DetailsDrawer({
               type="date"
               value={date}
               onChange={(event) => onDateChange(event.target.value)}
-              className="min-h-11 w-full rounded-xl border border-[var(--calc-border)] bg-[var(--calc-surface-2)] px-3 text-sm font-normal text-[var(--calc-text)] outline-none transition focus:border-[var(--calc-accent)]"
+              className="min-h-11 w-full rounded-xl border border-(--calc-border) bg-(--calc-surface-2) px-3 text-sm font-normal text-(--calc-text) outline-none transition focus:border-(--calc-accent)"
             />
           </label>
 
           <section className="grid gap-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--calc-subtle)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--calc-subtle)">
               Payment Method
             </p>
             <div className="grid grid-cols-3 gap-2">
@@ -790,8 +777,8 @@ function DetailsDrawer({
                     className={cn(
                       "min-h-10 rounded-xl border text-sm font-semibold transition",
                       selected
-                        ? "border-[var(--calc-accent)] bg-[color-mix(in_srgb,var(--calc-accent)_15%,transparent)] text-[var(--calc-accent-2)]"
-                        : "border-[var(--calc-border)] bg-[var(--calc-surface-2)] text-[var(--calc-muted)]",
+                        ? "border-(--calc-accent) bg-[color-mix(in_srgb,var(--calc-accent)_15%,transparent)] text-(--calc-accent-2)"
+                        : "border-(--calc-border) bg-(--calc-surface-2) text-(--calc-muted)",
                     )}
                   >
                     {option.label}
@@ -801,7 +788,7 @@ function DetailsDrawer({
             </div>
           </section>
 
-          <label className="grid gap-2 text-sm font-semibold text-[var(--calc-muted)]">
+          <label className="grid gap-2 text-sm font-semibold text-(--calc-muted)">
             <span className="flex items-center gap-2">
               <MapPin className="size-4" />
               Place
@@ -810,17 +797,17 @@ function DetailsDrawer({
               value={place}
               onChange={(event) => onPlaceChange(event.target.value)}
               maxLength={120}
-              className="min-h-11 w-full rounded-xl border border-[var(--calc-border)] bg-[var(--calc-surface-2)] px-3 text-sm font-normal text-[var(--calc-text)] outline-none transition focus:border-[var(--calc-accent)]"
+              className="min-h-11 w-full rounded-xl border border-(--calc-border) bg-(--calc-surface-2) px-3 text-sm font-normal text-(--calc-text) outline-none transition focus:border-(--calc-accent)"
               placeholder="Shop, city, or account"
             />
           </label>
 
-          <label className="grid gap-2 text-sm font-semibold text-[var(--calc-muted)]">
+          <label className="grid gap-2 text-sm font-semibold text-(--calc-muted)">
             <span className="flex items-center gap-2">
               <Paperclip className="size-4" />
               Attachment
             </span>
-            <span className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--calc-border-strong)] bg-[var(--calc-surface-2)] px-3 text-sm font-normal text-[var(--calc-muted)]">
+            <span className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-(--calc-border-strong) bg-(--calc-surface-2) px-3 text-sm font-normal text-(--calc-muted)">
               <FileUp className="size-4" />
               Pick file
               <input
@@ -837,12 +824,12 @@ function DetailsDrawer({
               />
             </span>
             {attachment ? (
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--calc-border)] bg-[var(--calc-surface-2)] px-3 py-2 text-sm font-normal text-[var(--calc-text)]">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-(--calc-border) bg-(--calc-surface-2) px-3 py-2 text-sm font-normal text-(--calc-text)">
                 <span className="min-w-0 truncate">{attachment.name}</span>
                 <button
                   type="button"
                   onClick={() => onAttachmentChange(null)}
-                  className="min-h-11 px-2 text-sm font-semibold text-[var(--calc-expense)]"
+                  className="min-h-11 px-2 text-sm font-semibold text-(--calc-expense)"
                 >
                   Remove
                 </button>

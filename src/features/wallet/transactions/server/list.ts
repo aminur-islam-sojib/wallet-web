@@ -65,36 +65,51 @@ export async function getTransactionsPageData(
 ): Promise<TransactionsPageData> {
   const { value: selectedMonth, start, end } = getMonthRange(filters.month);
   const normalizedPage = clampPage(page);
+  const userObjectId = new Types.ObjectId(userId);
 
   const [categories, tags] = await Promise.all([
-    Category.find({ userId }).sort({ type: 1, name: 1 }).lean(),
-    Tag.find({ userId }).sort({ name: 1 }).lean(),
+    Category.find({ userId: userObjectId }).sort({ type: 1, name: 1 }).lean(),
+    Tag.find({ userId: userObjectId }).sort({ name: 1 }).lean(),
   ]);
 
   const query: Record<string, unknown> = {
-    userId,
+    userId: userObjectId,
+    date: { $gte: start, $lt: end },
+  };
+
+  const summaryQuery: Record<string, unknown> = {
+    userId: userObjectId,
     date: { $gte: start, $lt: end },
   };
 
   if (filters.type === "income" || filters.type === "expense") {
     query.type = filters.type;
+    summaryQuery.type = filters.type;
   }
 
   if (isObjectId(filters.categoryId)) {
-    query.categoryId = filters.categoryId;
+    const categoryObjectId = new Types.ObjectId(filters.categoryId);
+    query.categoryId = categoryObjectId;
+    summaryQuery.categoryId = new Types.ObjectId(filters.categoryId);
   }
 
   if (isObjectId(filters.tagId)) {
-    query.tagIds = filters.tagId;
+    const tagObjectId = new Types.ObjectId(filters.tagId);
+    query.tagIds = tagObjectId;
+    summaryQuery.tagIds = new Types.ObjectId(filters.tagId);
   }
 
-  const [total, transactions] = await Promise.all([
+  const [total, transactions, totals] = await Promise.all([
     Transaction.countDocuments(query),
     Transaction.find(query)
       .sort({ date: -1, createdAt: -1 })
       .skip((normalizedPage - 1) * pageSize)
       .limit(pageSize)
       .lean(),
+    Transaction.aggregate<{ _id: "income" | "expense"; total: number }>([
+      { $match: summaryQuery },
+      { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
+    ]),
   ]);
 
   const categoryOptions = categories.map(
@@ -115,6 +130,10 @@ export async function getTransactionsPageData(
   );
 
   const pagination = getPagination(total, normalizedPage, pageSize);
+  const summary = {
+    income: totals.find((item) => item._id === "income")?.total ?? 0,
+    expense: totals.find((item) => item._id === "expense")?.total ?? 0,
+  };
 
   return {
     selectedMonth,
@@ -126,6 +145,7 @@ export async function getTransactionsPageData(
       tagOptions,
     ),
     pagination,
+    summary,
     filters: {
       ...filters,
       month: selectedMonth,

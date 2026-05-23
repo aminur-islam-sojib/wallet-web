@@ -57,11 +57,17 @@ export type TransactionsPagination = {
   totalPages: number;
 };
 
+export type TransactionsSummary = {
+  income: number;
+  expense: number;
+};
+
 export type TransactionsPageData = {
   selectedMonth: string;
   categories: TransactionsCategoryOption[];
   tags: TransactionsTagOption[];
   transactions: TransactionRow[];
   pagination: TransactionsPagination;
+  summary: TransactionsSummary;
   filters: TransactionsFilters;
 };

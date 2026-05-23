@@ -1,17 +1,19 @@
 import { requireUser } from "@/lib/auth";
 import { getTransactionsPageData } from "@/features/wallet/transactions/server";
 import type { TransactionsFilters } from "@/features/wallet/transactions/types";
+import TransactionsFiltersPanel from "@/features/wallet/transactions/components/transactions-filters";
 import TransactionsList from "@/features/wallet/transactions/components/transactions-list";
+import { formatBDT } from "@/lib/money";
+
+export const dynamic = "force-dynamic";
 
 type WalletTransactionsPageProps = {
-  searchParams?: {
-    month?: string;
-    type?: string;
-    categoryId?: string;
-    tagId?: string;
-    page?: string;
-  };
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 function normalizeType(value?: string): TransactionsFilters["type"] {
   if (value === "income" || value === "expense") return value;
@@ -30,19 +32,20 @@ export default async function WalletTransactionsPage({
   searchParams,
 }: WalletTransactionsPageProps) {
   const user = await requireUser();
+  const resolvedSearchParams = await searchParams;
   const filters: TransactionsFilters = {
-    month: searchParams?.month,
-    type: normalizeType(searchParams?.type),
-    categoryId: searchParams?.categoryId,
-    tagId: searchParams?.tagId,
+    month: firstParam(resolvedSearchParams?.month),
+    type: normalizeType(firstParam(resolvedSearchParams?.type)),
+    categoryId: firstParam(resolvedSearchParams?.categoryId),
+    tagId: firstParam(resolvedSearchParams?.tagId),
   };
-  const page = parsePage(searchParams?.page);
+  const page = parsePage(firstParam(resolvedSearchParams?.page));
   const data = await getTransactionsPageData(
     user._id.toString(),
     filters,
     page,
   );
-
+  console.log(data);
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -56,6 +59,25 @@ export default async function WalletTransactionsPage({
           <p className="mt-2 text-sm text-muted-foreground">
             Review your wallet activity and filter by date, category, or tag.
           </p>
+          <TransactionsFiltersPanel
+            categories={data.categories}
+            tags={data.tags}
+            initialFilters={data.filters}
+          />
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border bg-background p-4">
+              <p className="text-xs text-muted-foreground">Income</p>
+              <p className="mt-1 text-lg font-semibold text-foreground">
+                {formatBDT(data.summary.income)}
+              </p>
+            </div>
+            <div className="rounded-xl border bg-background p-4">
+              <p className="text-xs text-muted-foreground">Expense</p>
+              <p className="mt-1 text-lg font-semibold text-foreground">
+                {formatBDT(data.summary.expense)}
+              </p>
+            </div>
+          </div>
           <div className="mt-6">
             <TransactionsList
               transactions={data.transactions}
@@ -67,4 +89,8 @@ export default async function WalletTransactionsPage({
       </div>
     </main>
   );
+}
+
+function formatAmount(amountPaisa: number) {
+  return formatBDT(amountPaisa).replace(/^BDT\s?/, "");
 }
