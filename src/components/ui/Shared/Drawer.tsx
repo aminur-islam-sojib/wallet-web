@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/lib/wallet-nav";
 import { ListTodo } from "lucide-react";
 import ThemeToggleButton from "@/features/Theme/theme-toggle-button";
+import { APP_INFO } from "@/config/app";
 type AccountDrawerProps = {
   user: {
     name: string;
@@ -115,10 +116,17 @@ export default function DrawerRight({
           </div>
 
           <DrawerFooter className="gap-3">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Close
-            </Button>
-            <LogoutButton />
+            <div className=" flex flex-col">
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                  Close
+                </Button>
+                <LogoutButton />
+              </div>
+              <div className=" mt-1">
+                {APP_INFO.name} -- {APP_INFO.version}
+              </div>
+            </div>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
