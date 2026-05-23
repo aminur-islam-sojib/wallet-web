@@ -1,9 +1,9 @@
 import { requireUser } from "@/lib/auth";
 import { getTransactionsPageData } from "@/features/wallet/transactions/server";
 import type { TransactionsFilters } from "@/features/wallet/transactions/types";
-import TransactionsFiltersPanel from "@/features/wallet/transactions/components/transactions-filters";
 import TransactionsList from "@/features/wallet/transactions/components/transactions-list";
 import { formatBDT } from "@/lib/money";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -48,33 +48,36 @@ export default async function WalletTransactionsPage({
   console.log(data);
   return (
     <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border bg-background p-6 shadow-sm">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            Wallet
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-normal">
-            Transactions
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Review your wallet activity and filter by date, category, or tag.
-          </p>
-          <TransactionsFiltersPanel
-            categories={data.categories}
-            tags={data.tags}
-            initialFilters={data.filters}
-          />
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border bg-background p-4">
-              <p className="text-xs text-muted-foreground">Income</p>
-              <p className="mt-1 text-lg font-semibold text-foreground">
+      <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="rounded-2xl">
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {/* Income Card */}
+            <div className="relative overflow-hidden rounded-xl border bg-background p-4">
+              <div className="absolute inset-x-0 top-0 h-0.75 rounded-t-xl bg-chart-2" />
+              <p className="mb-2.5 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                <TrendingUp className="h-3.5 w-3.5 text-chart-2" />
+                Income
+              </p>
+              <p className="text-xl font-medium leading-none tracking-tight text-chart-2">
                 {formatBDT(data.summary.income)}
               </p>
+              <p className="mt-2 text-[11px] text-muted-foreground/60">
+                This month
+              </p>
             </div>
-            <div className="rounded-xl border bg-background p-4">
-              <p className="text-xs text-muted-foreground">Expense</p>
-              <p className="mt-1 text-lg font-semibold text-foreground">
+
+            {/* Expense Card */}
+            <div className="relative overflow-hidden rounded-xl border bg-background p-4">
+              <div className="absolute inset-x-0 top-0 h-0.75 rounded-t-xl bg-chart-4" />
+              <p className="mb-2.5 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                <TrendingDown className="h-3.5 w-3.5 text-chart-4" />
+                Expense
+              </p>
+              <p className="text-xl font-medium leading-none tracking-tight text-chart-4">
                 {formatBDT(data.summary.expense)}
+              </p>
+              <p className="mt-2 text-[11px] text-muted-foreground/60">
+                This month
               </p>
             </div>
           </div>

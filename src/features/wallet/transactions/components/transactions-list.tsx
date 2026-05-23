@@ -22,7 +22,22 @@ function groupByDate(transactions: TransactionRow[]) {
 function formatAmount(amountPaisa: number) {
   return formatBDT(amountPaisa).replace(/^BDT\s?/, "");
 }
+function formatTransactionDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
 
+  const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  if (isSameDay(date, today)) return "Today";
+  if (isSameDay(date, yesterday)) return "Yesterday";
+
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 // ─── Single transaction card ──────────────────────────────────────────────────
 function TransactionCard({
   transaction,
@@ -65,18 +80,23 @@ function TransactionCard({
           <p className="truncate text-sm font-medium text-foreground max-w-40">
             {displayName}
           </p>
-          <span
-            className="shrink-0 text-sm font-semibold"
-            style={{ color: isIncome ? "#1a9e6e" : "#e24b4a" }}
-          >
-            {isIncome ? "+BDT " : "-BDT "}
-            {formatAmount(transaction.amountPaisa)}
-          </span>
+          <div>
+            <span
+              className="shrink-0 text-sm font-semibold"
+              style={{ color: isIncome ? "#1a9e6e" : "#e24b4a" }}
+            >
+              {isIncome ? "+BDT " : "-BDT "}
+              {formatAmount(transaction.amountPaisa)}
+            </span>
+          </div>
         </div>
 
         <div className="mt-0.5 flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
             {transaction.paymentMethod ?? "Cash"} · {transaction.categoryName}
+          </p>
+          <p className="text-muted-foreground text-right">
+            {formatTransactionDate(transaction.date)}
           </p>
         </div>
         <div>
