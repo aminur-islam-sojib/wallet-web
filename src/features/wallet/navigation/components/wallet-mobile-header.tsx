@@ -1,11 +1,17 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Bell, Filter, Search } from "lucide-react";
 
+import TransactionsFilters from "@/features/wallet/transactions/components/transactions-filters-top";
 import { cn } from "@/lib/utils";
 import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/lib/wallet-nav";
 import DrawerRight from "@/components/ui/Shared/Drawer";
+import type {
+  TransactionsCategoryOption,
+  TransactionsFilters as TransactionsFiltersType,
+  TransactionsTagOption,
+} from "@/features/wallet/transactions/types";
 
 type WalletMobileHeaderProps = {
   user: {
@@ -13,7 +19,17 @@ type WalletMobileHeaderProps = {
     email: string;
     image?: string | null;
   };
+  transactionsFilters?: {
+    categories: TransactionsCategoryOption[];
+    tags: TransactionsTagOption[];
+  };
 };
+
+function normalizeType(value?: string): TransactionsFiltersType["type"] {
+  if (value === "income" || value === "expense") return value;
+  if (value === "all") return "all";
+  return "all";
+}
 
 function getRouteLabel(pathname: string) {
   if (pathname === "/wallet") {
@@ -75,12 +91,20 @@ function Avatar({
 
 export default function WalletMobileHeader({
   user,
+  transactionsFilters,
 }: WalletMobileHeaderProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const routeLabel = getRouteLabel(pathname);
   const isWalletHome = pathname === "/wallet";
   const isTransactions = pathname.startsWith("/wallet/transactions");
   const isWalletRoute = pathname.startsWith("/wallet");
+  const initialFilters: TransactionsFiltersType = {
+    month: searchParams?.get("month") ?? undefined,
+    type: normalizeType(searchParams?.get("type") ?? undefined),
+    categoryId: searchParams?.get("categoryId") ?? undefined,
+    tagId: searchParams?.get("tagId") ?? undefined,
+  };
 
   if (isWalletHome) {
     return null;
@@ -126,13 +150,23 @@ export default function WalletMobileHeader({
               >
                 <Search className="size-5" />
               </button>
-              <button
-                type="button"
-                className="grid size-11 place-items-center rounded-full border border-border text-foreground"
-                aria-label="Filter transactions"
-              >
-                <Filter className="size-5" />
-              </button>
+              {transactionsFilters ? (
+                <TransactionsFilters
+                  categories={transactionsFilters.categories}
+                  tags={transactionsFilters.tags}
+                  initialFilters={initialFilters}
+                  containerClassName="mt-0"
+                  triggerClassName="grid size-11 place-items-center rounded-full border border-border text-foreground px-0"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="grid size-11 place-items-center rounded-full border border-border text-foreground"
+                  aria-label="Filter transactions"
+                >
+                  <Filter className="size-5" />
+                </button>
+              )}
               {accountTrigger}
             </>
           ) : (

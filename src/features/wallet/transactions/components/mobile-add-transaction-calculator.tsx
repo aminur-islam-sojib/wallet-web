@@ -506,9 +506,7 @@ function CategoryDrawer({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-(--calc-muted)">
-                None selected yet.
-              </p>
+              <p className="text-sm text-(--calc-muted)">None selected yet.</p>
             )}
           </section>
 
@@ -740,9 +738,7 @@ function DetailsDrawer({
                   </button>
                 ))
               ) : (
-                <p className="text-sm text-(--calc-muted)">
-                  No labels yet.
-                </p>
+                <p className="text-sm text-(--calc-muted)">No labels yet.</p>
               )}
             </div>
           </section>
