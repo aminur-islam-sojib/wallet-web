@@ -32,14 +32,15 @@ function TransactionCard({
   categories: TransactionsCategoryOption[];
 }) {
   const isIncome = transaction.type === "income";
-  const displayName = transaction.note || transaction.categoryName;
+  const displayName = transaction.categoryName;
+  const note = transaction.note;
   const category = categories.find(
     (item) => item.id === transaction.categoryId,
   );
   const categoryColor =
     category?.color ?? transaction.categoryColor ?? "#64748b";
   const categoryIcon = category?.icon ?? "circle";
-
+  console.log(transaction);
   return (
     <article className="relative flex cursor-pointer items-center gap-3 border-b border-border bg-background px-4 py-3 transition-colors active:bg-muted/40">
       {/* Category icon circle */}
@@ -68,7 +69,7 @@ function TransactionCard({
             className="shrink-0 text-sm font-semibold"
             style={{ color: isIncome ? "#1a9e6e" : "#e24b4a" }}
           >
-            {isIncome ? "+" : "-"}
+            {isIncome ? "+BDT " : "-BDT "}
             {formatAmount(transaction.amountPaisa)}
           </span>
         </div>
@@ -77,6 +78,15 @@ function TransactionCard({
           <p className="truncate text-xs text-muted-foreground">
             {transaction.paymentMethod ?? "Cash"} · {transaction.categoryName}
           </p>
+        </div>
+        <div>
+          {note ? (
+            <div className="truncate text-xs text-muted-foreground">
+              <i>"{note}"</i>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
 
         {/* Tags row */}

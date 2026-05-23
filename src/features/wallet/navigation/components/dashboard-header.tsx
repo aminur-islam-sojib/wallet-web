@@ -5,6 +5,10 @@ import TransactionForm from "@/features/wallet/transactions/components/transacti
 import { getDashboardData } from "@/features/wallet/server/dashboard";
 import WalletBottomNav from "@/features/wallet/navigation/components/wallet-bottom-nav";
 import WalletMobileHeader from "@/features/wallet/navigation/components/wallet-mobile-header";
+import type {
+  TransactionsCategoryOption,
+  TransactionsTagOption,
+} from "@/features/wallet/transactions/types";
 import { Separator } from "@/components/ui/separator";
 import type { DashboardFilters } from "@/features/wallet/types";
 
@@ -43,7 +47,13 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
 
   return (
     <div>
-      <WalletMobileHeader user={safeUser} />
+      <WalletMobileHeader
+        user={safeUser}
+        transactionsFilters={{
+          categories: data.categories as TransactionsCategoryOption[],
+          tags: data.tags as TransactionsTagOption[],
+        }}
+      />
       <div className="hidden sm:block">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div className="flex gap-3">

@@ -15,12 +15,16 @@ type TransactionsFiltersProps = {
   categories: TransactionsCategoryOption[];
   tags: TransactionsTagOption[];
   initialFilters: TransactionsFilters;
+  containerClassName?: string;
+  triggerClassName?: string;
 };
 
 export default function TransactionsFilters({
   categories,
   tags,
   initialFilters,
+  containerClassName,
+  triggerClassName,
 }: TransactionsFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -82,14 +86,16 @@ export default function TransactionsFilters({
   }
 
   return (
-    <div className="mt-5">
+    <div className={cn("mt-5", containerClassName)}>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex min-h-11 items-center gap-2 rounded-xl border bg-background px-4 text-sm font-semibold text-foreground transition hover:bg-muted"
+        className={cn(
+          "flex min-h-11 items-center gap-2 rounded-xl border bg-background px-4 text-sm font-semibold text-foreground transition hover:bg-muted",
+          triggerClassName,
+        )}
       >
         <Filter className="size-4" />
-        Filters
       </button>
 
       <div
