@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { DEFAULT_CATEGORIES } from "@/lib/defaults";
 import { connectToDatabase } from "@/lib/db";
 import { hashPassword } from "@/lib/passwords";
-import { Category } from "@/models/category";
+import { Category } from "@/features/wallet/server/models/category";
 import { User } from "@/models/user";
 
 type GoogleUserInput = {

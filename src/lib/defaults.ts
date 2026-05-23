@@ -1,4 +1,4 @@
-import type { TransactionType } from "@/models/types";
+import type { TransactionType } from "@/features/wallet/types/models";
 
 export const DEFAULT_CATEGORIES: Array<{
   name: string;
