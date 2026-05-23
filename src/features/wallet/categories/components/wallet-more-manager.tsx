@@ -209,7 +209,7 @@ export default function WalletMoreManager({
   }
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-4">
+    <div className="mx-auto flex max-w-lg flex-col gap-4 py-10">
       <div className="flex items-center gap-3 ">
         <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
           <Wallet size={20} />

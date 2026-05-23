@@ -48,7 +48,7 @@ export function Dashboard({
   const greeting = getGreeting();
 
   return (
-    <main className="-mt-24 min-h-screen bg-[#f5f5f7] pb-6 sm:mt-0 sm:bg-muted/30 sm:py-6">
+    <main className=" -mt-10 min-h-screen bg-[#f5f5f7] pb-6 sm:mt-0 sm:bg-muted/30 sm:py-6">
       <div className="mx-auto flex w-full max-w-7xl flex-col sm:px-6 lg:px-8">
         <section className="mx-auto flex w-full max-w-md flex-col overflow-hidden bg-[#f5f5f7] sm:max-w-none sm:overflow-visible sm:rounded-2xl sm:border sm:border-border/70 sm:bg-[#f5f5f7] sm:p-4 lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-6">
           <div className="min-w-0">

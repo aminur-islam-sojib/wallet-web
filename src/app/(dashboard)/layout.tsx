@@ -7,7 +7,7 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen pt-24 pb-10 sm:pb-0 sm:pt-0">
+    <div className="min-h-screen pt-10 pb-10 sm:pb-0 sm:pt-0">
       <Header />
       {children}
     </div>
