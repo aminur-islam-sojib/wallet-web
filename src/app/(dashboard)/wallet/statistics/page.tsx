@@ -1,8 +1,10 @@
 import { requireUser } from "@/lib/auth";
 import { formatDateInputValueInTimeZone } from "@/lib/date";
+import BalanceAreaChart from "@/features/wallet/statistics/components/balance-area-chart";
 import CategoryDetailPanel from "@/features/wallet/statistics/components/category-detail-panel";
 import CategoryDrilldown from "@/features/wallet/statistics/components/category-drilldown";
 import TagDetailPanel from "@/features/wallet/statistics/components/tag-detail-panel";
+import { getBalanceHistory } from "@/features/wallet/statistics/server/balance-history";
 import { getCategoryDetailByRange } from "@/features/wallet/statistics/server/category-detail";
 import { getCategoryTotalsByRange } from "@/features/wallet/statistics/server/category-totals";
 import { getTagDetailByRange } from "@/features/wallet/statistics/server/tag-detail";
@@ -35,9 +37,12 @@ export default async function WalletStaisticsPage({
   const user = await requireUser();
   const params = await searchParams;
   const selectedCategoryId = firstParam(params.categoryId);
-  const selectedTagId = selectedCategoryId ? undefined : firstParam(params.tagId);
+  const selectedTagId = selectedCategoryId
+    ? undefined
+    : firstParam(params.tagId);
   const { startDate, endDate } = getCurrentMonthRange();
-  const [categoryData, tagData] = await Promise.all([
+  const [balanceHistory, categoryData, tagData] = await Promise.all([
+    getBalanceHistory(user._id.toString()),
     getCategoryTotalsByRange(user._id.toString(), {
       startDate,
       endDate,
@@ -68,15 +73,18 @@ export default async function WalletStaisticsPage({
 
   return (
     <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mt-6">
+      <div className="mx-auto w-full max-w-5xl px-4 py-5 pb-10 sm:px-6 lg:px-8">
+        <div className="mt-6 space-y-6">
+          <BalanceAreaChart data={balanceHistory} />
           <CategoryDrilldown
             categoryData={categoryData}
             tagData={tagData}
             selectedCategoryId={selectedCategoryId}
             selectedTagId={selectedTagId}
           >
-            {selectedCategoryId ? <CategoryDetailPanel detail={detail} /> : null}
+            {selectedCategoryId ? (
+              <CategoryDetailPanel detail={detail} />
+            ) : null}
             {selectedTagId ? <TagDetailPanel detail={tagDetail} /> : null}
           </CategoryDrilldown>
         </div>

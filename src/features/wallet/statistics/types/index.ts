@@ -29,6 +29,24 @@ export type CategoryTotalsResponse = {
   categories: CategoryTotal[];
 };
 
+export type BalanceHistoryPoint = {
+  date: string;
+  label: string;
+  incomePaisa: number;
+  expensePaisa: number;
+  netPaisa: number;
+  balancePaisa: number;
+};
+
+export type BalanceHistoryResponse = {
+  startDate: string;
+  endDate: string;
+  currentBalancePaisa: number;
+  minBalancePaisa: number;
+  maxBalancePaisa: number;
+  points: BalanceHistoryPoint[];
+};
+
 export type CategoryDetailFilters = CategoryTotalsFilters & {
   categoryId: string;
 };
