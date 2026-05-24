@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Cell, Pie, PieChart } from "recharts";
+import { Cell, Pie, PieChart, Sector } from "recharts";
+import type { PieSectorShapeProps } from "recharts";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { ChartContainer } from "@/components/ui/chart";
 import { formatBDT } from "@/lib/money";
@@ -12,6 +14,67 @@ type Props = {
   onGoDeeper?: (categoryId: string, categoryName: string) => void;
 };
 
+// ---------- animated active shape ----------
+function AnimatedActiveShape(props: PieSectorShapeProps) {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
+    props;
+
+  // Compute the expanded arc path using SVG arc commands
+  const expandedOuter = outerRadius + 10;
+
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+  const arcPath = (
+    inner: number,
+    outer: number,
+    start: number,
+    end: number,
+  ) => {
+    const s = toRad(start);
+    const e = toRad(end);
+    const cosS = Math.cos(-s);
+    const sinS = Math.sin(-s);
+    const cosE = Math.cos(-e);
+    const sinE = Math.sin(-e);
+
+    const x1 = cx + outer * cosS;
+    const y1 = cy + outer * sinS;
+    const x2 = cx + outer * cosE;
+    const y2 = cy + outer * sinE;
+    const x3 = cx + inner * cosE;
+    const y3 = cy + inner * sinE;
+    const x4 = cx + inner * cosS;
+    const y4 = cy + inner * sinS;
+
+    const largeArc = end - start > 180 ? 1 : 0;
+
+    return [
+      `M ${x1} ${y1}`,
+      `A ${outer} ${outer} 0 ${largeArc} 0 ${x2} ${y2}`,
+      `L ${x3} ${y3}`,
+      `A ${inner} ${inner} 0 ${largeArc} 1 ${x4} ${y4}`,
+      "Z",
+    ].join(" ");
+  };
+
+  const d = arcPath(innerRadius, expandedOuter, startAngle, endAngle);
+
+  return (
+    <motion.path
+      d={d}
+      fill={fill}
+      initial={{ opacity: 0.6, scale: 0.97 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      style={{
+        transformOrigin: `${cx}px ${cy}px`,
+        filter: "drop-shadow(0 3px 8px rgba(15,23,42,0.22))",
+      }}
+    />
+  );
+}
+
+// ---------- main component ----------
 export default function CategoryPieChart({ data, onGoDeeper }: Props) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
@@ -32,6 +95,17 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
   );
 
   const activeCategory = activeIndex !== null ? chartData[activeIndex] : null;
+
+  const renderPieShape = React.useCallback(
+    (props: PieSectorShapeProps) => {
+      if (props.index === activeIndex) {
+        return <AnimatedActiveShape {...props} />;
+      }
+
+      return <Sector {...props} />;
+    },
+    [activeIndex],
+  );
 
   if (data.categories.length === 0) {
     return (
@@ -66,6 +140,7 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
               isAnimationActive
               animationDuration={500}
               animationEasing="ease-out"
+              shape={renderPieShape}
               onMouseEnter={(_, index) => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
               onClick={(_, index) =>
@@ -81,15 +156,7 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
                     activeIndex === null || activeIndex === index ? 1 : 0.35
                   }
                   style={{
-                    transition: "opacity 200ms ease, transform 200ms ease",
-                    transform:
-                      activeIndex === index ? "scale(1.03)" : "scale(1)",
-                    transformOrigin: "center",
-                    transformBox: "fill-box",
-                    filter:
-                      activeIndex === index
-                        ? "drop-shadow(0 2px 6px rgba(15, 23, 42, 0.18))"
-                        : "none",
+                    transition: "opacity 200ms ease",
                   }}
                 />
               ))}
@@ -99,55 +166,72 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
 
         {/* Center label */}
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          {activeCategory ? (
-            <>
-              <span
-                className="mb-1 h-2 w-2 rounded-full"
-                style={{ background: activeCategory.color }}
-              />
-              <span className="max-w-22.5 truncate text-center text-[11px] text-muted-foreground">
-                {activeCategory.name}
-              </span>
-              <span className="text-base font-semibold tabular-nums text-foreground">
-                {activeCategory.percent}%
-              </span>
-              <span className="text-xs tabular-nums text-muted-foreground">
-                {formatBDT(activeCategory.value)}
-              </span>
-              {onGoDeeper && (
-                <button
-                  className="pointer-events-auto mt-2 rounded-full border border-border bg-background px-2.5 py-0.5 text-[10px] font-medium text-foreground transition-colors hover:bg-muted"
-                  onClick={() =>
-                    onGoDeeper(activeCategory.categoryId, activeCategory.name)
-                  }
-                >
-                  Go deeper →
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <span className="text-[11px] text-muted-foreground">Total</span>
-              <span className="text-base font-semibold tabular-nums text-foreground">
-                {formatBDT(data.totalPaisa)}
-              </span>
-              <span className="mt-0.5 text-[10px] text-muted-foreground">
-                {data.categories.length} categories
-              </span>
-            </>
-          )}
+          <AnimatePresence mode="wait">
+            {activeCategory ? (
+              <motion.div
+                key={activeCategory.categoryId}
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                <span
+                  className="mb-1 h-2 w-2 rounded-full"
+                  style={{ background: activeCategory.color }}
+                />
+                <span className="max-w-22.5 truncate text-center text-[11px] text-muted-foreground">
+                  {activeCategory.name}
+                </span>
+                <span className="text-base font-semibold tabular-nums text-foreground">
+                  {activeCategory.percent}%
+                </span>
+                <span className="text-xs tabular-nums text-muted-foreground">
+                  {formatBDT(activeCategory.value)}
+                </span>
+                {onGoDeeper && (
+                  <button
+                    className="pointer-events-auto mt-2 rounded-full border border-border bg-background px-2.5 py-0.5 text-[10px] font-medium text-foreground transition-colors hover:bg-muted"
+                    onClick={() =>
+                      onGoDeeper(activeCategory.categoryId, activeCategory.name)
+                    }
+                  >
+                    Go deeper →
+                  </button>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="total"
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                <span className="text-[11px] text-muted-foreground">Total</span>
+                <span className="text-base font-semibold tabular-nums text-foreground">
+                  {formatBDT(data.totalPaisa)}
+                </span>
+                <span className="mt-0.5 text-[10px] text-muted-foreground">
+                  {data.categories.length} categories
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Legend */}
       <ul className="mt-4 space-y-2">
         {data.categories.map((cat, index) => (
-          <li
+          <motion.li
             key={cat.categoryId}
             className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted/50"
-            style={{
+            animate={{
               opacity: activeIndex === null || activeIndex === index ? 1 : 0.4,
             }}
+            transition={{ duration: 0.15 }}
             onClick={() => setActiveIndex(activeIndex === index ? null : index)}
           >
             <span className="flex items-center gap-2">
@@ -163,7 +247,7 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
                 {formatBDT(cat.totalPaisa)}
               </span>
             </span>
-          </li>
+          </motion.li>
         ))}
       </ul>
 
