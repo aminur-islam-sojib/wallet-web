@@ -1,9 +1,23 @@
 "use client";
+
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, {
+import {
+  Check,
+  Eye,
+  EyeOff,
+  FileText,
+  Lock,
+  Mail,
+  User,
+  X,
+} from "lucide-react";
+import {
+  type ReactNode,
   useActionState,
   useEffect,
+  useId,
   useState,
   useTransition,
 } from "react";
@@ -13,111 +27,8 @@ import {
   type SignUpState,
 } from "@/app/(auth)/signin/actions";
 
-const UserIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-    <circle cx="12" cy="7" r="4"></circle>
-  </svg>
-);
-
-const MailIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-    <polyline points="22,6 12,13 2,6"></polyline>
-  </svg>
-);
-
-const LockIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-    <circle cx="12" cy="16" r="1"></circle>
-    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-  </svg>
-);
-
-const EyeIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>
-);
-
-const EyeOffIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-  </svg>
-);
-
-const GitHubIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-  >
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-  </svg>
-);
-
-const GoogleIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-  >
+const GoogleIcon = () => (
+  <svg aria-hidden="true" className="h-6 w-6" viewBox="0 0 24 24">
     <path
       fill="#4285F4"
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -128,32 +39,109 @@ const GoogleIcon: React.FC = () => (
     />
     <path
       fill="#FBBC05"
-      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
     />
     <path
       fill="#EA4335"
-      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
     />
   </svg>
 );
 
-// Main Component
-const Register: React.FC = () => {
+type FloatingFieldProps = {
+  autoComplete: string;
+  icon: ReactNode;
+  id: string;
+  label: string;
+  name: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  type: string;
+  value: string;
+  disabled?: boolean;
+  trailing?: ReactNode;
+};
+
+function FloatingField({
+  autoComplete,
+  icon,
+  id,
+  label,
+  name,
+  onChange,
+  placeholder,
+  type,
+  value,
+  disabled,
+  trailing,
+}: FloatingFieldProps) {
+  return (
+    <div className="group relative">
+      <label
+        htmlFor={id}
+        className="absolute left-4 top-0 z-10 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-slate-500 transition-colors group-focus-within:text-[#3B66CC]"
+      >
+        {label}
+      </label>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 text-slate-400">
+          {icon}
+        </span>
+        <input
+          id={id}
+          name={name}
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required
+          disabled={disabled}
+          className="min-h-14 w-full rounded-[18px] border border-slate-300 bg-white px-5 py-4 pl-12 pr-12 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#3B66CC] focus:ring-4 focus:ring-[#3B66CC]/15 disabled:cursor-not-allowed disabled:opacity-65"
+        />
+        {trailing}
+      </div>
+    </div>
+  );
+}
+
+export default function Register() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [fullName, setFullName] = useState<string>("");
+  const nameId = useId();
+  const emailId = useId();
+  const passwordId = useId();
+  const termsId = useId();
+  const [showPassword, setShowPassword] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [signupError, setSignupError] = useState<string | null>(null);
+  const [googlePending, setGooglePending] = useState(false);
   const [signupState, signupAction, signupPending] = useActionState<
     SignUpState,
     FormData
   >(signUpWithCredentials, { status: "idle" });
   const [signinPending, startSignin] = useTransition();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  const busy = signupPending || signinPending || googlePending;
+
+  async function handleGoogleSignin() {
+    if (busy) {
+      return;
+    }
+
+    setSignupError(null);
+    setGooglePending(true);
+
+    try {
+      await signIn("google", { callbackUrl: "/" });
+    } catch {
+      setSignupError("Google sign-in failed. Please try again.");
+      setGooglePending(false);
+    }
+  }
 
   useEffect(() => {
     if (signupState.status !== "success") {
@@ -178,185 +166,255 @@ const Register: React.FC = () => {
   }, [email, password, router, signupState.status, startSignin]);
 
   return (
-    <div className="flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Main Card */}
-        <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-8 shadow-sm">
-          {/* Form */}
-          <form className="space-y-6" action={signupAction}>
-            {/* Full Name Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="fullName"
-                className="text-sm font-medium text-gray-900 dark:text-gray-100"
-              >
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                  <UserIcon />
-                </div>
-                <input
-                  id="fullName"
-                  name="name"
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name"
-                  autoComplete="name"
-                  className="flex h-10 w-full rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-3 py-2 pl-10 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-950 dark:focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-50"
-                />
-              </div>
-            </div>
+    <section className="flex min-h-screen w-full justify-center bg-white sm:bg-slate-100 sm:px-4 sm:py-8">
+      <div className="relative flex min-h-screen w-full max-w-107.5 flex-col overflow-hidden bg-white sm:min-h-0 sm:rounded-[32px] sm:shadow-xl">
+        <div className="relative h-67 shrink-0 overflow-hidden bg-[linear-gradient(135deg,#9bb1ff_0%,#b6c6ff_52%,#d8e0ff_100%)]">
+          <div className="absolute -left-12 -top-12 h-44 w-44 rounded-full bg-[linear-gradient(135deg,#162a63,#2b4c9e)] opacity-95" />
+          <div className="absolute -right-10 top-20 h-40 w-40 rounded-full bg-white/40 blur-xs" />
+          <div className="absolute left-8 top-12 text-white">
+            <p className="text-base font-semibold text-white/80">Wallet Web</p>
+            <h1 className="mt-3 max-w-62.5 text-4xl font-bold leading-tight tracking-normal">
+              Get Started!
+            </h1>
+          </div>
+          <svg
+            aria-hidden="true"
+            className="absolute -bottom-px left-0 h-28 w-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 400 120"
+          >
+            <path d="M0 40C120 90 280 20 400 60V120H0V40Z" fill="#ffffff" />
+          </svg>
+        </div>
 
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-gray-900 dark:text-gray-100"
+        <div className="relative z-10 -mt-10 flex flex-1 flex-col rounded-t-[42px] bg-white px-6 pb-8 pt-8 min-[390px]:px-8">
+          <div className="mb-8 text-center">
+            <h2 className="text-[34px] font-bold leading-tight tracking-normal text-[#1E4499]">
+              Create Account
+            </h2>
+            <p className="mt-2 text-base font-medium text-slate-500">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-bold text-[#3B66CC] underline-offset-4 hover:underline"
               >
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                  <MailIcon />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com"
-                  autoComplete="email"
-                  className="flex h-10 w-full rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-3 py-2 pl-10 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-950 dark:focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-50"
-                />
-              </div>
-            </div>
+                Login
+              </Link>
+            </p>
+          </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-gray-900 dark:text-gray-100"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                  <LockIcon />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  autoComplete="new-password"
-                  className="flex h-10 w-full rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-3 py-2 pl-10 pr-10 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-950 dark:focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black disabled:cursor-not-allowed disabled:opacity-50"
-                />
+          <form action={signupAction} className="space-y-6">
+            <FloatingField
+              id={nameId}
+              name="name"
+              label="Full Name"
+              value={fullName}
+              onChange={setFullName}
+              type="text"
+              autoComplete="name"
+              placeholder="Enter full name"
+              disabled={busy}
+              icon={<User aria-hidden="true" className="h-5 w-5" />}
+            />
+
+            <FloatingField
+              id={emailId}
+              name="email"
+              label="Email Address"
+              value={email}
+              onChange={setEmail}
+              type="email"
+              autoComplete="email"
+              placeholder="Enter email address"
+              disabled={busy}
+              icon={<Mail aria-hidden="true" className="h-5 w-5" />}
+            />
+
+            <FloatingField
+              id={passwordId}
+              name="password"
+              label="Password"
+              value={password}
+              onChange={setPassword}
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Enter password"
+              disabled={busy}
+              icon={<Lock aria-hidden="true" className="h-5 w-5" />}
+              trailing={
                 <button
                   type="button"
-                  onClick={togglePasswordVisibility}
+                  onClick={() => setShowPassword((current) => !current)}
+                  disabled={busy}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute right-2 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full text-slate-400 transition hover:text-[#3B66CC] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B66CC]/20 disabled:cursor-not-allowed disabled:opacity-55"
                 >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  {showPassword ? (
+                    <EyeOff aria-hidden="true" className="h-5 w-5" />
+                  ) : (
+                    <Eye aria-hidden="true" className="h-5 w-5" />
+                  )}
                 </button>
-              </div>
-            </div>
+              }
+            />
 
-            {/* Terms checkbox */}
-            <div className="flex items-start space-x-3">
-              <input
-                id="terms"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-950 dark:focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black"
-              />
+            <div className="flex items-center gap-3">
               <label
-                htmlFor="terms"
-                className="text-sm text-gray-600 dark:text-gray-400 leading-5"
+                htmlFor={termsId}
+                className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center"
               >
-                I agree to the{" "}
-                <a
-                  href="#"
-                  className="font-medium text-primary underline underline-offset-4 hover:no-underline"
-                >
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a
-                  href="#"
-                  className="font-medium text-primary underline underline-offset-4 hover:no-underline"
-                >
-                  Privacy Policy
-                </a>
+                <input
+                  id={termsId}
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(event) => setTermsAccepted(event.target.checked)}
+                  required
+                  disabled={busy}
+                  className="peer sr-only"
+                />
+                <span className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-300 bg-white transition peer-checked:border-[#3B66CC] peer-checked:bg-[#EBF1FF]">
+                  {termsAccepted ? (
+                    <Check
+                      aria-hidden="true"
+                      className="h-4 w-4 text-[#3B66CC]"
+                    />
+                  ) : null}
+                </span>
               </label>
+              <p className="text-sm font-medium leading-5 text-slate-500">
+                I agree to{" "}
+                <button
+                  type="button"
+                  onClick={() => setTermsOpen(true)}
+                  disabled={busy}
+                  className="min-h-11 font-bold text-[#1E4499] underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-55"
+                >
+                  Terms and Conditions
+                </button>
+              </p>
             </div>
 
-            {/* Create Account Button */}
             <button
               type="submit"
-              disabled={signupPending || signinPending}
-              className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-black"
+              disabled={busy}
+              className="flex min-h-14 w-full items-center justify-center rounded-[18px] bg-chart-1 px-5 py-4 text-base font-bold text-white shadow-lg shadow-[#3B66CC]/20 transition hover:bg-[#2A52B3] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B66CC]/25 disabled:pointer-events-none disabled:opacity-65 motion-safe:active:scale-[0.98]"
             >
-              {signupPending || signinPending
-                ? "Creating account..."
-                : "Create account"}
+              {googlePending
+                ? "Signing in..."
+                : signupPending || signinPending
+                  ? "Creating account..."
+                  : "Sign Up"}
             </button>
             {signupState.status === "error" ? (
-              <p className="text-sm text-red-500" role="alert">
+              <p
+                className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+                role="alert"
+              >
                 {signupState.message}
               </p>
             ) : null}
             {signupError ? (
-              <p className="text-sm text-red-500" role="alert">
+              <p
+                className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+                role="alert"
+              >
                 {signupError}
               </p>
             ) : null}
           </form>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200 dark:border-gray-800" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-black px-2 text-gray-500 dark:text-gray-400">
-                Or continue with
+          <div className="mt-8">
+            <div className="relative mb-6 flex items-center justify-center">
+              <span className="absolute h-px w-full bg-slate-200" />
+              <span className="relative bg-white px-4 text-sm font-semibold text-slate-400">
+                Sign up with
               </span>
             </div>
-          </div>
 
-          {/* Social Login */}
-
-          <div className=" flex w-full">
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/" })}
-              className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white dark:ring-offset-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 dark:focus-visible:ring-gray-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 dark:border-gray-800 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-950 hover:text-gray-900 dark:hover:text-gray-50 h-10 px-4 py-2"
-            >
-              <GoogleIcon />
-              <span className="ml-2">Google</span>
-            </button>
-          </div>
-
-          {/* Sign in link */}
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Already have an account ?{" "}
-              <a
-                href="/login"
-                className="font-medium text-primary underline underline-offset-4 hover:no-underline"
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={handleGoogleSignin}
+                disabled={busy}
+                aria-label="Sign up with Google"
+                className="flex h-14 min-w-14 items-center justify-center gap-3 rounded-full border border-slate-100 bg-white px-4 font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B66CC]/20 disabled:cursor-not-allowed disabled:opacity-65 motion-safe:active:scale-95"
               >
-                Sign in
-              </a>
-            </p>
+                <GoogleIcon />
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-auto flex justify-center pb-1 pt-8">
+            <div className="h-1.5 w-36 rounded-full bg-slate-300" />
+          </div>
+        </div>
+
+        <div
+          className={`absolute inset-0 z-40 flex items-end bg-black/50 transition-opacity duration-300 ${
+            termsOpen ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          aria-hidden={!termsOpen}
+        >
+          <div
+            className={`max-h-[80%] w-full overflow-y-auto rounded-t-[32px] bg-white p-8 shadow-2xl transition-transform duration-300 ${
+              termsOpen ? "translate-y-0" : "translate-y-full"
+            }`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="terms-title"
+          >
+            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-300" />
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#EBF1FF] text-[#3B66CC]">
+                  <FileText aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <h3
+                  id="terms-title"
+                  className="text-xl font-bold text-[#1E4499]"
+                >
+                  Terms and Conditions
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTermsOpen(false)}
+                disabled={busy}
+                aria-label="Close terms"
+                className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B66CC]/15 disabled:cursor-not-allowed disabled:opacity-55"
+              >
+                <X aria-hidden="true" className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="space-y-4 text-sm leading-6 text-slate-600">
+              <p className="font-semibold text-slate-700">
+                Welcome to Wallet Web.
+              </p>
+              <p>
+                By creating an account, you agree to use the app responsibly and
+                keep your sign-in details private.
+              </p>
+              <p>
+                Your wallet data is tied to your account so you can track
+                income, expenses, limits, categories, and history across
+                sessions.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setTermsAccepted(true);
+                setTermsOpen(false);
+              }}
+              disabled={busy}
+              className="mt-6 flex min-h-14 w-full items-center justify-center rounded-[18px] bg-[#3B66CC] px-5 py-4 text-base font-bold text-white transition hover:bg-[#2A52B3] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B66CC]/25 disabled:cursor-not-allowed disabled:opacity-65"
+            >
+              I Agree
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Register;
+}
