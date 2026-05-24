@@ -55,7 +55,7 @@ export default function WalletFloatingActions({
                 onClick={handleOpenLimitDrawer}
                 className="pressable-soft flex min-h-11 w-full items-center gap-3 rounded-md px-3 py-2 text-left text-base hover:bg-muted"
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-violet-100 text-violet-700">
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
                   <Gauge className="size-5" />
                 </span>
                 <span>
@@ -74,7 +74,7 @@ export default function WalletFloatingActions({
           onClick={handleToggleMenu}
           aria-expanded={menuOpen}
           aria-label="Wallet quick actions"
-          className="pressable-soft grid size-14 place-items-center rounded-full bg-foreground text-background shadow-lg shadow-foreground/25 ring-1 ring-background/80"
+          className="pressable-soft grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-1 ring-background/80"
         >
           <Plus className="size-6" />
         </button>

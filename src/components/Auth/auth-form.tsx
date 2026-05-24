@@ -281,14 +281,14 @@ const Register: React.FC = () => {
                 I agree to the{" "}
                 <a
                   href="#"
-                  className="font-medium text-gray-900 dark:text-gray-100 underline underline-offset-4 hover:no-underline"
+                  className="font-medium text-primary underline underline-offset-4 hover:no-underline"
                 >
                   Terms of Service
                 </a>{" "}
                 and{" "}
                 <a
                   href="#"
-                  className="font-medium text-gray-900 dark:text-gray-100 underline underline-offset-4 hover:no-underline"
+                  className="font-medium text-primary underline underline-offset-4 hover:no-underline"
                 >
                   Privacy Policy
                 </a>
@@ -299,7 +299,7 @@ const Register: React.FC = () => {
             <button
               type="submit"
               disabled={signupPending || signinPending}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white dark:ring-offset-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 dark:focus-visible:ring-gray-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-900 dark:bg-gray-50 text-gray-50 dark:text-gray-900 hover:bg-gray-900/90 dark:hover:bg-gray-50/90 h-10 px-4 py-2 w-full"
+              className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-black"
             >
               {signupPending || signinPending
                 ? "Creating account..."
@@ -347,7 +347,7 @@ const Register: React.FC = () => {
               Already have an account ?{" "}
               <a
                 href="/login"
-                className="font-medium text-gray-900 dark:text-gray-100 underline underline-offset-4 hover:no-underline"
+                className="font-medium text-primary underline underline-offset-4 hover:no-underline"
               >
                 Sign in
               </a>

@@ -211,7 +211,7 @@ export default function WalletMoreManager({
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4 py-10">
       <div className="flex items-center gap-3 ">
-        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
+        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
           <Wallet size={20} />
         </div>
         <div>
@@ -264,7 +264,7 @@ export default function WalletMoreManager({
                 name="name"
                 placeholder="e.g. Groceries"
                 required
-                className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
 
@@ -275,7 +275,7 @@ export default function WalletMoreManager({
                 </label>
                 <select
                   name="type"
-                  className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="expense">Expense</option>
                   <option value="income">Income</option>
@@ -303,7 +303,7 @@ export default function WalletMoreManager({
 
             <button
               type="submit"
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 active:scale-[0.98]"
             >
               <Plus size={16} /> Add category
             </button>
@@ -383,7 +383,7 @@ export default function WalletMoreManager({
                                   name: e.target.value,
                                 })
                               }
-                              className="h-11 w-full rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              className="h-11 w-full rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                             />
                           </div>
 
@@ -425,7 +425,7 @@ export default function WalletMoreManager({
                           <div className="grid grid-cols-2 gap-2 pt-1">
                             <button
                               type="submit"
-                              className="flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+                              className="flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 active:scale-[0.98]"
                             >
                               Save
                             </button>
@@ -478,12 +478,12 @@ export default function WalletMoreManager({
                 name="name"
                 placeholder="e.g. Office"
                 required
-                className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="h-11 w-full rounded-lg border bg-muted/40 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
             <button
               type="submit"
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 active:scale-[0.98]"
             >
               <Plus size={16} /> Add tag
             </button>
@@ -544,13 +544,13 @@ export default function WalletMoreManager({
                               name="name"
                               value={tagDraftName}
                               onChange={(e) => setTagDraftName(e.target.value)}
-                              className="h-11 w-full rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              className="h-11 w-full rounded-lg border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                             />
                           </div>
                           <div className="grid grid-cols-2 gap-2 pt-1">
                             <button
                               type="submit"
-                              className="flex h-11 items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
+                              className="flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 active:scale-[0.98]"
                             >
                               Save
                             </button>

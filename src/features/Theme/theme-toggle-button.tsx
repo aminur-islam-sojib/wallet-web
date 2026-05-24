@@ -2,33 +2,37 @@
 
 import { cn } from "@/lib/utils";
 import { Moon, Sun } from "lucide-react";
-import React, { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type ThemePreference = "light" | "dark";
 
 function getThemePreference(): ThemePreference {
   if (typeof window === "undefined") return "light";
-
   const stored = window.localStorage.getItem("theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
   if (stored === "light" || stored === "dark") return stored;
-  return prefersDark ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
-function subscribeToThemePreference(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener("themechange", onStoreChange);
-
+function subscribeToTheme(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener("themechange", onChange);
   return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener("themechange", onStoreChange);
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener("themechange", onChange);
   };
+}
+
+function setThemePreference(next: ThemePreference) {
+  document.documentElement.classList.toggle("dark", next === "dark");
+  window.localStorage.setItem("theme", next);
+  window.dispatchEvent(new Event("themechange"));
 }
 
 export default function ThemeToggleButton() {
   const theme = useSyncExternalStore(
-    subscribeToThemePreference,
+    subscribeToTheme,
     getThemePreference,
     () => "light",
   );
@@ -37,48 +41,61 @@ export default function ThemeToggleButton() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  function setThemePreference(nextTheme: ThemePreference) {
-    const root = document.documentElement;
-    root.classList.toggle("dark", nextTheme === "dark");
-    window.localStorage.setItem("theme", nextTheme);
-    window.dispatchEvent(new Event("themechange"));
-  }
+  const isDark = theme === "dark";
 
   return (
-    <div className="grid gap-3 rounded-lg border p-4">
-      <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-        Theme
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => setThemePreference("light")}
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+      onClick={() => setThemePreference(isDark ? "light" : "dark")}
+      className={cn(
+        "group relative flex h-10 w-full items-center rounded-full border px-1 transition-all duration-300",
+        isDark
+          ? "border-foreground/20 bg-foreground"
+          : "border-border bg-muted/60",
+      )}
+    >
+      {/* sliding pill */}
+      <span
+        className={cn(
+          "absolute h-8 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+          isDark
+            ? "left-[calc(50%+2px)] bg-background"
+            : "left-1 bg-background shadow-sm",
+        )}
+        aria-hidden="true"
+      />
+
+      {/* labels */}
+      <span className="relative z-10 flex flex-1 items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-200">
+        <Sun
           className={cn(
-            "flex min-h-11 items-center justify-center gap-2 rounded-md border text-sm font-semibold transition",
-            theme === "light"
-              ? "border-foreground/40 bg-foreground text-background"
-              : "hover:bg-muted",
+            "size-3.5 transition-colors duration-200",
+            !isDark ? "text-amber-500" : "text-muted-foreground",
           )}
-          aria-pressed={theme === "light"}
+        />
+        <span
+          className={cn(!isDark ? "text-foreground" : "text-muted-foreground")}
         >
-          <Sun className="size-4" />
           Light
-        </button>
-        <button
-          type="button"
-          onClick={() => setThemePreference("dark")}
+        </span>
+      </span>
+
+      <span className="relative z-10 flex flex-1 items-center justify-center gap-1.5 text-xs font-medium transition-colors duration-200">
+        <Moon
           className={cn(
-            "flex min-h-11 items-center justify-center gap-2 rounded-md border text-sm font-semibold transition",
-            theme === "dark"
-              ? "border-foreground/40 bg-foreground text-background"
-              : "hover:bg-muted",
+            "size-3.5 transition-colors duration-200",
+            isDark ? "text-blue-400" : "text-muted-foreground",
           )}
-          aria-pressed={theme === "dark"}
+        />
+        <span
+          className={cn(isDark ? "text-background" : "text-muted-foreground")}
         >
-          <Moon className="size-4" />
           Dark
-        </button>
-      </div>
-    </div>
+        </span>
+      </span>
+    </button>
   );
 }

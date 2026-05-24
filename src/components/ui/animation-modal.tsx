@@ -13,7 +13,7 @@ const AnimationModalView: React.FC = () => {
       type: "scale" as const,
       name: "Scale",
       description: "Smooth scale-in with spring physics",
-      color: "bg-blue-500 hover:bg-blue-600",
+      color: "bg-primary hover:bg-primary/90",
     },
     {
       type: "slide" as const,
@@ -25,7 +25,7 @@ const AnimationModalView: React.FC = () => {
       type: "fade" as const,
       name: "Fade",
       description: "Simple fade-in animation",
-      color: "bg-purple-500 hover:bg-purple-600",
+      color: "bg-primary hover:bg-primary/90",
     },
     {
       type: "bounce" as const,

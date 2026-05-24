@@ -40,7 +40,7 @@ export function WalletDashboardTransactions({
         </h2>
         <Link
           href="/wallet/transactions"
-          className="flex min-h-11 items-center px-1 text-sm font-medium text-[#534ab7]"
+          className="flex min-h-11 items-center px-1 text-sm font-medium text-primary"
         >
           See all
         </Link>
@@ -58,7 +58,7 @@ export function WalletDashboardTransactions({
           ))
         ) : (
           <div className="rounded-xl border border-dashed border-border bg-background p-5 text-center shadow-sm">
-            <span className="mx-auto grid size-11 place-items-center rounded-lg bg-[#eeedfe] text-[#534ab7]">
+            <span className="mx-auto grid size-11 place-items-center rounded-lg bg-primary/10 text-primary">
               <WalletCards className="size-5" />
             </span>
             <p className="mt-3 text-sm font-medium text-foreground">

@@ -147,7 +147,7 @@ function WalletAvatar({ user }: { user: DashboardProps["user"] }) {
   }
 
   return (
-    <div className="grid size-11 shrink-0 place-items-center rounded-full bg-[#534ab7] text-sm font-semibold text-[#eeedfe]">
+    <div className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
       {getInitials(user.name)}
     </div>
   );
