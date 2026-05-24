@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Filter } from "lucide-react";
 
@@ -37,17 +37,13 @@ export default function TransactionsFilters({
   const [categoryId, setCategoryId] = useState(initialFilters.categoryId ?? "");
   const [tagId, setTagId] = useState(initialFilters.tagId ?? "");
 
-  useEffect(() => {
+  function openFilters() {
     setMonth(initialFilters.month ?? "");
     setType(initialFilters.type ?? "all");
     setCategoryId(initialFilters.categoryId ?? "");
     setTagId(initialFilters.tagId ?? "");
-  }, [
-    initialFilters.month,
-    initialFilters.type,
-    initialFilters.categoryId,
-    initialFilters.tagId,
-  ]);
+    setOpen(true);
+  }
 
   const tagOptions = useMemo(
     () => tags.slice().sort((a, b) => a.name.localeCompare(b.name)),
@@ -89,7 +85,7 @@ export default function TransactionsFilters({
     <div className={cn("mt-5", containerClassName)}>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={openFilters}
         className={cn(
           "flex min-h-11 items-center gap-2 rounded-xl border bg-background px-4 text-sm font-semibold text-foreground transition hover:bg-muted",
           triggerClassName,

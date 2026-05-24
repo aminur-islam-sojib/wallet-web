@@ -2,7 +2,9 @@ import { Dashboard } from "@/features/wallet/dashboard/components/dashboard";
 import { requireUser } from "@/lib/auth";
 import { getDashboardData } from "@/features/wallet/server/dashboard";
 import { getCategoryTotalsByRange } from "@/features/wallet/statistics/server/category-totals";
+import { WalletDashboardSkeleton } from "@/features/wallet/loading/components/wallet-loading-skeletons";
 import type { DashboardFilters } from "@/features/wallet/types";
+import { Suspense } from "react";
 
 type DashboardPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -22,11 +24,18 @@ function getMonthDateRange(month: string) {
   return { startDate, endDate };
 }
 
-export default async function DashboardPage({
+export default function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
-  const user = await requireUser();
-  const params = await searchParams;
+  return (
+    <Suspense fallback={<WalletDashboardSkeleton />}>
+      <DashboardData searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function DashboardData({ searchParams }: DashboardPageProps) {
+  const [user, params] = await Promise.all([requireUser(), searchParams]);
   const filters: DashboardFilters = {
     month: firstParam(params.month),
     type: firstParam(params.type) as DashboardFilters["type"],

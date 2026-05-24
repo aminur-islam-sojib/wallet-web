@@ -4,6 +4,8 @@ import type { TransactionsFilters } from "@/features/wallet/transactions/types";
 import TransactionsList from "@/features/wallet/transactions/components/transactions-list";
 import { formatBDT } from "@/lib/money";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { WalletTransactionsSkeleton } from "@/features/wallet/loading/components/wallet-loading-skeletons";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -28,11 +30,23 @@ function parsePage(value?: string) {
   return Math.floor(parsed);
 }
 
-export default async function WalletTransactionsPage({
+export default function WalletTransactionsPage({
   searchParams,
 }: WalletTransactionsPageProps) {
-  const user = await requireUser();
-  const resolvedSearchParams = await searchParams;
+  return (
+    <Suspense fallback={<WalletTransactionsSkeleton />}>
+      <TransactionsPageData searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function TransactionsPageData({
+  searchParams,
+}: WalletTransactionsPageProps) {
+  const [user, resolvedSearchParams] = await Promise.all([
+    requireUser(),
+    searchParams,
+  ]);
   const filters: TransactionsFilters = {
     month: firstParam(resolvedSearchParams?.month),
     type: normalizeType(firstParam(resolvedSearchParams?.type)),
@@ -45,7 +59,7 @@ export default async function WalletTransactionsPage({
     filters,
     page,
   );
-  console.log(data);
+
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
@@ -92,8 +106,4 @@ export default async function WalletTransactionsPage({
       </div>
     </main>
   );
-}
-
-function formatAmount(amountPaisa: number) {
-  return formatBDT(amountPaisa).replace(/^BDT\s?/, "");
 }

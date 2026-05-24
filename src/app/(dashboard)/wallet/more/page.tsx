@@ -4,8 +4,18 @@ import { Tag } from "@/features/wallet/server/models/tag";
 
 import type { CategoryOption, TagOption } from "@/features/wallet/types";
 import WalletMoreManager from "@/features/wallet/categories/components/wallet-more-manager";
+import { WalletMoreSkeleton } from "@/features/wallet/loading/components/wallet-loading-skeletons";
+import { Suspense } from "react";
 
-export default async function WalletMorePage() {
+export default function WalletMorePage() {
+  return (
+    <Suspense fallback={<WalletMoreSkeleton />}>
+      <WalletMoreData />
+    </Suspense>
+  );
+}
+
+async function WalletMoreData() {
   const user = await requireUser();
   const [categories, tags] = await Promise.all([
     Category.find({ userId: user._id }).sort({ type: 1, name: 1 }).lean(),
