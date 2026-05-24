@@ -84,7 +84,11 @@ export function Dashboard({
               monthlyLimit={monthlyLimit}
             />
 
-            <CategoryPieChart data={categoryData} />
+            <CategoryPieChart
+              data={categoryData}
+              actionHref="/wallet/statistics"
+              actionLabel="See more"
+            />
             <WalletDashboardTransactions
               transactions={transactions}
               categories={categories}

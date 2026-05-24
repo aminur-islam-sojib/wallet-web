@@ -6,9 +6,16 @@ import type { CategoryTotalsResponse } from "@/features/wallet/statistics/types"
 type Props = {
   data: CategoryTotalsResponse;
   onGoDeeper?: (categoryId: string, categoryName: string) => void;
+  actionHref?: string;
+  actionLabel?: string;
 };
 
-export default function CategoryPieChart({ data, onGoDeeper }: Props) {
+export default function CategoryPieChart({
+  data,
+  onGoDeeper,
+  actionHref,
+  actionLabel,
+}: Props) {
   return (
     <StatisticsPieChart
       title={`${data.type === "expense" ? "Expenses" : "Income"} by Category`}
@@ -25,6 +32,8 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
       emptyText="No category data for this range"
       itemLabel="categories"
       onGoDeeper={onGoDeeper}
+      actionHref={actionHref}
+      actionLabel={actionLabel}
     />
   );
 }
