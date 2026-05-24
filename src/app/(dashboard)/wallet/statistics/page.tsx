@@ -1,29 +1,33 @@
 import { requireUser } from "@/lib/auth";
+import { formatDateInputValueInTimeZone } from "@/lib/date";
+import CategoryPieChart from "@/features/wallet/statistics/components/category-pie-chart";
+import { getCategoryTotalsByRange } from "@/features/wallet/statistics/server/category-totals";
 
-export default async function WalletAnalyticsPage() {
-  await requireUser();
+const WALLET_TIME_ZONE = "Asia/Dhaka";
+
+function getCurrentMonthRange() {
+  const today = formatDateInputValueInTimeZone(new Date(), WALLET_TIME_ZONE);
+  const [year, month] = today.split("-").map(Number);
+  const startDate = `${year}-${String(month).padStart(2, "0")}-01`;
+  const endDate = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+
+  return { startDate, endDate };
+}
+
+export default async function WalletStaisticsPage() {
+  const user = await requireUser();
+  const { startDate, endDate } = getCurrentMonthRange();
+  const data = await getCategoryTotalsByRange(user._id.toString(), {
+    startDate,
+    endDate,
+    type: "expense",
+  });
 
   return (
     <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border bg-background p-6 shadow-sm">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            Wallet
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-normal">
-            Analytics
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Visualize spending trends and category breakdowns here.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-              Monthly trend chart (coming soon)
-            </div>
-            <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-              Category split (coming soon)
-            </div>
-          </div>
+      <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mt-6">
+          <CategoryPieChart data={data} />
         </div>
       </div>
     </main>
