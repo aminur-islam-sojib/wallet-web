@@ -2,8 +2,11 @@ import { requireUser } from "@/lib/auth";
 import { formatDateInputValueInTimeZone } from "@/lib/date";
 import CategoryDetailPanel from "@/features/wallet/statistics/components/category-detail-panel";
 import CategoryDrilldown from "@/features/wallet/statistics/components/category-drilldown";
+import TagDetailPanel from "@/features/wallet/statistics/components/tag-detail-panel";
 import { getCategoryDetailByRange } from "@/features/wallet/statistics/server/category-detail";
 import { getCategoryTotalsByRange } from "@/features/wallet/statistics/server/category-totals";
+import { getTagDetailByRange } from "@/features/wallet/statistics/server/tag-detail";
+import { getTagTotalsByRange } from "@/features/wallet/statistics/server/tag-totals";
 
 const WALLET_TIME_ZONE = "Asia/Dhaka";
 
@@ -32,12 +35,20 @@ export default async function WalletStaisticsPage({
   const user = await requireUser();
   const params = await searchParams;
   const selectedCategoryId = firstParam(params.categoryId);
+  const selectedTagId = selectedCategoryId ? undefined : firstParam(params.tagId);
   const { startDate, endDate } = getCurrentMonthRange();
-  const data = await getCategoryTotalsByRange(user._id.toString(), {
-    startDate,
-    endDate,
-    type: "expense",
-  });
+  const [categoryData, tagData] = await Promise.all([
+    getCategoryTotalsByRange(user._id.toString(), {
+      startDate,
+      endDate,
+      type: "expense",
+    }),
+    getTagTotalsByRange(user._id.toString(), {
+      startDate,
+      endDate,
+      type: "expense",
+    }),
+  ]);
   const detail = selectedCategoryId
     ? await getCategoryDetailByRange(user._id.toString(), {
         startDate,
@@ -46,16 +57,27 @@ export default async function WalletStaisticsPage({
         categoryId: selectedCategoryId,
       })
     : null;
+  const tagDetail = selectedTagId
+    ? await getTagDetailByRange(user._id.toString(), {
+        startDate,
+        endDate,
+        type: "expense",
+        tagId: selectedTagId,
+      })
+    : null;
 
   return (
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
         <div className="mt-6">
           <CategoryDrilldown
-            data={data}
+            categoryData={categoryData}
+            tagData={tagData}
             selectedCategoryId={selectedCategoryId}
+            selectedTagId={selectedTagId}
           >
             {selectedCategoryId ? <CategoryDetailPanel detail={detail} /> : null}
+            {selectedTagId ? <TagDetailPanel detail={tagDetail} /> : null}
           </CategoryDrilldown>
         </div>
       </div>
