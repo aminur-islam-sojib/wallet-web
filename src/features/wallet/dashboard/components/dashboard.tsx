@@ -2,9 +2,11 @@ import { Bell, TrendingDown, TrendingUp } from "lucide-react";
 
 import { WalletDashboardBudget } from "@/features/wallet/dashboard/components/wallet-dashboard-budget";
 import { WalletDashboardTransactions } from "@/features/wallet/dashboard/components/wallet-dashboard-transactions";
+import CategoryPieChart from "@/features/wallet/statistics/components/category-pie-chart";
 import { formatBDT } from "@/lib/money";
 import type {
   CategoryOption,
+  CategoryTotalsResponse,
   MonthlyLimit,
   TagOption,
   TodaySummary,
@@ -28,6 +30,7 @@ type DashboardProps = {
   categories: CategoryOption[];
   tags: TagOption[];
   transactions: TransactionRow[];
+  categoryData: CategoryTotalsResponse;
 };
 
 export function Dashboard({
@@ -39,6 +42,7 @@ export function Dashboard({
   categories,
   tags,
   transactions,
+  categoryData,
 }: DashboardProps) {
   const updatedLabel = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -48,9 +52,9 @@ export function Dashboard({
   const greeting = getGreeting();
 
   return (
-    <main className=" -mt-10 min-h-screen bg-[#f5f5f7] pb-6 sm:mt-0 sm:bg-muted/30 sm:py-6">
+    <main className=" -mt-10 min-h-screen pb-6 sm:mt-0 sm:bg-muted/30 sm:py-6">
       <div className="mx-auto flex w-full max-w-7xl flex-col sm:px-6 lg:px-8">
-        <section className="mx-auto flex w-full max-w-md flex-col overflow-hidden bg-[#f5f5f7] sm:max-w-none sm:overflow-visible sm:rounded-2xl sm:border sm:border-border/70 sm:bg-[#f5f5f7] sm:p-4 lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-6">
+        <section className="mx-auto flex w-full max-w-md flex-col overflow-hidden sm:max-w-none sm:overflow-visible sm:rounded-2xl sm:border sm:border-border/70 sm:bg-[#f5f5f7] sm:p-4 lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-6">
           <div className="min-w-0">
             <WalletHero
               user={user}
@@ -73,12 +77,14 @@ export function Dashboard({
             </div>
           </div>
 
-          <div className="grid gap-4 px-4 pb-5 pt-4 sm:px-5 lg:px-0 lg:pt-0">
+          <div className=" gap-4 px-4 pb-5 pt-4 sm:px-5 lg:px-0 lg:pt-0">
             <WalletDashboardBudget
               selectedMonth={selectedMonth}
               monthExpense={summary.expense}
               monthlyLimit={monthlyLimit}
             />
+
+            <CategoryPieChart data={categoryData} />
             <WalletDashboardTransactions
               transactions={transactions}
               categories={categories}
@@ -124,13 +130,15 @@ function WalletHero({
         </button>
       </div>
 
-      <p className="text-xs font-medium uppercase tracking-[0.08em] text-white/50">
+      <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
         Total balance
       </p>
-      <p className="mt-1 wrap-break-word text-[34px] font-medium leading-tight tracking-normal text-white sm:text-5xl">
+      <p className="mt-1 wrap-break-word text-[34px] font-medium leading-tight tracking-normal  sm:text-5xl">
         {formatBDT(balance)}
       </p>
-      <p className="mt-1 text-xs text-white/40">Updated {updatedLabel}</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Updated {updatedLabel}
+      </p>
     </div>
   );
 }
@@ -170,8 +178,8 @@ function TodayStat({
       <span
         className={
           isIncome
-            ? "grid size-8 place-items-center rounded-lg bg-[#eaf3de] text-[#3b6d11]"
-            : "grid size-8 place-items-center rounded-lg bg-[#fcebeb] text-[#a32d2d]"
+            ? "grid size-8 place-items-center rounded-lg bg-[#eaf3de] text-chart-2"
+            : "grid size-8 place-items-center rounded-lg bg-[#fcebeb] text-chart-4"
         }
       >
         <Icon className="size-4" />
@@ -180,8 +188,8 @@ function TodayStat({
       <p
         className={
           isIncome
-            ? "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-[#3b6d11]"
-            : "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-[#a32d2d]"
+            ? "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-chart-2"
+            : "mt-1 wrap-break-word text-[17px] font-medium leading-tight tracking-normal text-chart-4"
         }
       >
         {value}

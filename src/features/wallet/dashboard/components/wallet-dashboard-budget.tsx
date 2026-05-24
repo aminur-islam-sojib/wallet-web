@@ -38,7 +38,7 @@ export function WalletDashboardBudget({
   const isOverLimit = remaining !== null && remaining < 0;
 
   return (
-    <section>
+    <section className="mb-5">
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="text-sm font-medium text-foreground">Monthly budget</h2>
         <div className="flex items-center gap-2">
