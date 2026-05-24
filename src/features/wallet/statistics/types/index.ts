@@ -38,6 +38,11 @@ export type BalanceHistoryPoint = {
   balancePaisa: number;
 };
 
+export type BalanceHistoryFilters = {
+  startDate: string;
+  endDate: string;
+};
+
 export type BalanceHistoryResponse = {
   startDate: string;
   endDate: string;

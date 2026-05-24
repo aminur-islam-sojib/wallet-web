@@ -11,6 +11,7 @@ import { getTagDetailByRange } from "@/features/wallet/statistics/server/tag-det
 import { getTagTotalsByRange } from "@/features/wallet/statistics/server/tag-totals";
 
 const WALLET_TIME_ZONE = "Asia/Dhaka";
+const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,29 @@ function getCurrentMonthRange() {
   return { startDate, endDate };
 }
 
+function normalizeDateRange(startDate: string, endDate: string) {
+  return startDate <= endDate
+    ? { startDate, endDate }
+    : { startDate: endDate, endDate: startDate };
+}
+
+function getStatisticsRange(params: Record<string, string | string[] | undefined>) {
+  const fallbackRange = getCurrentMonthRange();
+  const startDateParam = firstParam(params.startDate);
+  const endDateParam = firstParam(params.endDate);
+
+  if (
+    startDateParam &&
+    endDateParam &&
+    DATE_INPUT_PATTERN.test(startDateParam) &&
+    DATE_INPUT_PATTERN.test(endDateParam)
+  ) {
+    return normalizeDateRange(startDateParam, endDateParam);
+  }
+
+  return fallbackRange;
+}
+
 export default async function WalletStaisticsPage({
   searchParams,
 }: WalletStatisticsPageProps) {
@@ -40,9 +64,9 @@ export default async function WalletStaisticsPage({
   const selectedTagId = selectedCategoryId
     ? undefined
     : firstParam(params.tagId);
-  const { startDate, endDate } = getCurrentMonthRange();
+  const { startDate, endDate } = getStatisticsRange(params);
   const [balanceHistory, categoryData, tagData] = await Promise.all([
-    getBalanceHistory(user._id.toString()),
+    getBalanceHistory(user._id.toString(), { startDate, endDate }),
     getCategoryTotalsByRange(user._id.toString(), {
       startDate,
       endDate,
@@ -75,7 +99,11 @@ export default async function WalletStaisticsPage({
     <main className="min-h-screen bg-muted/30">
       <div className="mx-auto w-full max-w-5xl px-4 py-5 pb-10 sm:px-6 lg:px-8">
         <div className="mt-6 space-y-6">
-          <BalanceAreaChart data={balanceHistory} />
+          <BalanceAreaChart
+            data={balanceHistory}
+            startDate={startDate}
+            endDate={endDate}
+          />
           <CategoryDrilldown
             categoryData={categoryData}
             tagData={tagData}

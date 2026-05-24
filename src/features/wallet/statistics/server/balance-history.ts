@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 import { Transaction } from "@/features/wallet/server/models/transaction";
 import type {
+  BalanceHistoryFilters,
   BalanceHistoryPoint,
   BalanceHistoryResponse,
 } from "@/features/wallet/statistics/types";
@@ -38,14 +39,33 @@ function formatPointLabel(date: string, today: string) {
   }).format(parseUtcDate(date));
 }
 
+function normalizeDateRange(startDate: string, endDate: string) {
+  if (parseUtcDate(startDate) <= parseUtcDate(endDate)) {
+    return { startDate, endDate };
+  }
+
+  return { startDate: endDate, endDate: startDate };
+}
+
 export async function getBalanceHistory(
   userId: string,
+  filters?: BalanceHistoryFilters,
 ): Promise<BalanceHistoryResponse> {
   const today = formatUtcDate();
   const userObjectId = new Types.ObjectId(userId);
+  const selectedRange = filters
+    ? normalizeDateRange(filters.startDate, filters.endDate)
+    : null;
+  const match: Record<string, unknown> = { userId: userObjectId };
+
+  if (selectedRange) {
+    const endExclusive = addUtcDays(parseUtcDate(selectedRange.endDate), 1);
+
+    match.date = { $lt: endExclusive };
+  }
 
   const totals = await Transaction.aggregate<BalanceHistoryAggregationRow>([
-    { $match: { userId: userObjectId } },
+    { $match: match },
     {
       $group: {
         _id: {
@@ -70,7 +90,7 @@ export async function getBalanceHistory(
     { $sort: { _id: 1 } },
   ]);
 
-  if (totals.length === 0) {
+  if (totals.length === 0 && !selectedRange) {
     const emptyPoint: BalanceHistoryPoint = {
       date: today,
       label: "Today",
@@ -91,16 +111,15 @@ export async function getBalanceHistory(
   }
 
   const totalsByDate = new Map(totals.map((item) => [item._id, item]));
-  const startDate = totals[0]._id;
-  const endDate = totals.reduce(
-    (latest, item) => (item._id > latest ? item._id : latest),
-    today,
-  );
+  const startDate = selectedRange?.startDate ?? totals[0]._id;
+  const endDate =
+    selectedRange?.endDate ??
+    totals.reduce((latest, item) => (item._id > latest ? item._id : latest), today);
   const points: BalanceHistoryPoint[] = [];
   let balancePaisa = 0;
 
   for (
-    let cursor = parseUtcDate(startDate);
+    let cursor = totals.length > 0 ? parseUtcDate(totals[0]._id) : parseUtcDate(startDate);
     cursor <= parseUtcDate(endDate);
     cursor = addUtcDays(cursor, 1)
   ) {
@@ -111,14 +130,16 @@ export async function getBalanceHistory(
     const netPaisa = incomePaisa - expensePaisa;
 
     balancePaisa += netPaisa;
-    points.push({
-      date,
-      label: formatPointLabel(date, today),
-      incomePaisa,
-      expensePaisa,
-      netPaisa,
-      balancePaisa,
-    });
+    if (date >= startDate) {
+      points.push({
+        date,
+        label: formatPointLabel(date, today),
+        incomePaisa,
+        expensePaisa,
+        netPaisa,
+        balancePaisa,
+      });
+    }
   }
 
   const balances = points.map((point) => point.balancePaisa);
