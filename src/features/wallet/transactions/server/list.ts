@@ -2,9 +2,8 @@
 
 import { Types } from "mongoose";
 
-import { Category } from "@/features/wallet/server/models/category";
-import { Tag } from "@/features/wallet/server/models/tag";
 import { Transaction } from "@/features/wallet/server/models/transaction";
+import { getWalletOptions } from "@/features/wallet/server/options";
 import {
   dateInputValueToUtcRange,
   formatDateInputValueInTimeZone,
@@ -13,8 +12,6 @@ import type {
   TransactionsPageData,
   TransactionsPagination,
   TransactionsFilters,
-  TransactionsCategoryOption,
-  TransactionsTagOption,
 } from "@/features/wallet/transactions/types";
 import { mapTransactionsToRows } from "@/features/wallet/transactions/lib";
 
@@ -67,10 +64,8 @@ export async function getTransactionsPageData(
   const normalizedPage = clampPage(page);
   const userObjectId = new Types.ObjectId(userId);
 
-  const [categories, tags] = await Promise.all([
-    Category.find({ userId: userObjectId }).sort({ type: 1, name: 1 }).lean(),
-    Tag.find({ userId: userObjectId }).sort({ name: 1 }).lean(),
-  ]);
+  const { categories: categoryOptions, tags: tagOptions } =
+    await getWalletOptions(userId);
 
   const query: Record<string, unknown> = {
     userId: userObjectId,
@@ -111,23 +106,6 @@ export async function getTransactionsPageData(
       { $group: { _id: "$type", total: { $sum: "$amountPaisa" } } },
     ]),
   ]);
-
-  const categoryOptions = categories.map(
-    (category): TransactionsCategoryOption => ({
-      id: category._id.toString(),
-      name: category.name,
-      type: category.type as "income" | "expense",
-      color: category.color,
-      icon: category.icon ?? "circle",
-      isDefault: category.isDefault,
-    }),
-  );
-  const tagOptions = tags.map(
-    (tag): TransactionsTagOption => ({
-      id: tag._id.toString(),
-      name: tag.name,
-    }),
-  );
 
   const pagination = getPagination(total, normalizedPage, pageSize);
   const summary = {

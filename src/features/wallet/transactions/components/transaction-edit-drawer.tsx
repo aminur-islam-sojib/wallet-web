@@ -41,6 +41,8 @@ type TransactionEditDrawerProps = {
   tags: TransactionsTagOption[];
   trigger?: ReactNode;
   triggerAriaLabel?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export default function TransactionEditDrawer({
@@ -49,9 +51,11 @@ export default function TransactionEditDrawer({
   tags,
   trigger,
   triggerAriaLabel,
+  open: controlledOpen,
+  onOpenChange,
 }: TransactionEditDrawerProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [type, setType] = useState<TransactionType>(transaction.type);
   const [categoryId, setCategoryId] = useState(transaction.categoryId);
   const [amount, setAmount] = useState(formatAmount(transaction.amountPaisa));
@@ -69,6 +73,14 @@ export default function TransactionEditDrawer({
   const [deleteError, setDeleteError] = useState("");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+
+  function setOpen(nextOpen: boolean) {
+    onOpenChange?.(nextOpen);
+    if (controlledOpen === undefined) {
+      setInternalOpen(nextOpen);
+    }
+  }
 
   const typeCategories = useMemo(
     () => categories.filter((category) => category.type === type),

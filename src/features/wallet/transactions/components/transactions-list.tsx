@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { formatBDT } from "@/lib/money";
 import TransactionEditDrawer from "@/features/wallet/transactions/components/transaction-edit-drawer";
 import { CategoryIcon } from "@/features/wallet/categories/components/category-icon";
@@ -138,6 +140,15 @@ export default function TransactionsList({
   categories: TransactionsCategoryOption[];
   tags: TransactionsTagOption[];
 }) {
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionRow | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+
+  function openTransaction(transaction: TransactionRow) {
+    setSelectedTransaction(transaction);
+    setEditOpen(true);
+  }
+
   if (!transactions.length) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
@@ -163,22 +174,42 @@ export default function TransactionsList({
           {/* Transactions for this date */}
           <div>
             {txns.map((transaction) => (
-              <TransactionEditDrawer
+              <div
                 key={transaction.id}
-                transaction={transaction}
-                categories={categories}
-                tags={tags}
-                trigger={
-                  <TransactionCard
-                    transaction={transaction}
-                    categories={categories}
-                  />
-                }
-              />
+                role="button"
+                tabIndex={0}
+                onClick={() => openTransaction(transaction)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openTransaction(transaction);
+                  }
+                }}
+                className="w-full text-left"
+                aria-label={`Open ${
+                  transaction.note || transaction.categoryName
+                } transaction`}
+              >
+                <TransactionCard
+                  transaction={transaction}
+                  categories={categories}
+                />
+              </div>
             ))}
           </div>
         </section>
       ))}
+
+      {selectedTransaction ? (
+        <TransactionEditDrawer
+          key={selectedTransaction.id}
+          transaction={selectedTransaction}
+          categories={categories}
+          tags={tags}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+        />
+      ) : null}
     </div>
   );
 }

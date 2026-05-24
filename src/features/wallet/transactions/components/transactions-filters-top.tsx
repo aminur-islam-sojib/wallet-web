@@ -71,8 +71,8 @@ export default function TransactionsFilters({
     if (tagId) params.set("tagId", tagId);
     else params.delete("tagId");
 
-    router.push(`${pathname}?${params.toString()}`);
-    router.refresh();
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
     setOpen(false);
   }
 
@@ -82,7 +82,6 @@ export default function TransactionsFilters({
     setCategoryId("");
     setTagId("");
     router.push(pathname);
-    router.refresh();
     setOpen(false);
   }
 

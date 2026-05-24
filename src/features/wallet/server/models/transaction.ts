@@ -54,6 +54,10 @@ const transactionSchema = new Schema(
 
 transactionSchema.index({ userId: 1, date: -1 });
 transactionSchema.index({ userId: 1, type: 1, date: -1, categoryId: 1 });
+transactionSchema.index({ userId: 1, date: -1, createdAt: -1 });
+transactionSchema.index({ userId: 1, type: 1, date: -1, createdAt: -1 });
+transactionSchema.index({ userId: 1, categoryId: 1, date: -1, createdAt: -1 });
+transactionSchema.index({ userId: 1, tagIds: 1, date: -1, createdAt: -1 });
 
 export type TransactionDocument = InferSchemaType<typeof transactionSchema> & {
   _id: string;

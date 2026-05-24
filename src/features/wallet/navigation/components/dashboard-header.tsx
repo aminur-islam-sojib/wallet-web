@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/auth";
 import DrawerRight from "@/components/ui/Shared/Drawer";
 import MasterDialog from "@/features/wallet/transactions/components/master-dialog";
 import TransactionForm from "@/features/wallet/transactions/components/transaction-form";
-import { getDashboardData } from "@/features/wallet/server/dashboard";
+import { getWalletOptions } from "@/features/wallet/server/options";
 import WalletBottomNav from "@/features/wallet/navigation/components/wallet-bottom-nav";
 import WalletMobileHeader from "@/features/wallet/navigation/components/wallet-mobile-header";
 import type {
@@ -10,11 +10,6 @@ import type {
   TransactionsTagOption,
 } from "@/features/wallet/transactions/types";
 import { Separator } from "@/components/ui/separator";
-import type { DashboardFilters } from "@/features/wallet/types";
-
-function firstParam(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 type HeaderProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -22,26 +17,18 @@ type HeaderProps = {
 
 export default async function DashboardHeader({ searchParams }: HeaderProps) {
   const user = await requireUser();
-  const params: Record<string, string | string[] | undefined> = searchParams
-    ? await searchParams
-    : {};
-  const filters: DashboardFilters = {
-    month: firstParam(params.month),
-    type: firstParam(params.type) as DashboardFilters["type"],
-    categoryId: firstParam(params.categoryId),
-    tagId: firstParam(params.tagId),
-  };
-  const data = await getDashboardData(user._id.toString(), filters);
+  await searchParams;
+  const { categories, tags } = await getWalletOptions(user._id.toString());
 
   const safeUser = {
     name: user.name,
     email: user.email,
     image: user.image ?? null,
   };
-  const incomeCategories = data.categories.filter(
+  const incomeCategories = categories.filter(
     (category) => category.type === "income",
   );
-  const expenseCategories = data.categories.filter(
+  const expenseCategories = categories.filter(
     (category) => category.type === "expense",
   );
 
@@ -50,8 +37,8 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
       <WalletMobileHeader
         user={safeUser}
         transactionsFilters={{
-          categories: data.categories as TransactionsCategoryOption[],
-          tags: data.tags as TransactionsTagOption[],
+          categories: categories as TransactionsCategoryOption[],
+          tags: tags as TransactionsTagOption[],
         }}
       />
       <div className="hidden sm:block">
@@ -72,7 +59,7 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
               <TransactionForm
                 incomeCategories={incomeCategories}
                 expenseCategories={expenseCategories}
-                tags={data.tags}
+                tags={tags}
               />
             </MasterDialog>
           </div>
@@ -80,11 +67,9 @@ export default async function DashboardHeader({ searchParams }: HeaderProps) {
         <Separator />
       </div>
       <WalletBottomNav
-        selectedMonth={data.selectedMonth}
-        monthlyLimit={data.monthlyLimit}
         incomeCategories={incomeCategories}
         expenseCategories={expenseCategories}
-        tags={data.tags}
+        tags={tags}
       />
     </div>
   );

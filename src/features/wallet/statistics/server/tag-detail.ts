@@ -1,15 +1,11 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 
-import { Category } from "@/features/wallet/server/models/category";
 import { Tag } from "@/features/wallet/server/models/tag";
 import { Transaction } from "@/features/wallet/server/models/transaction";
+import { getWalletOptions } from "@/features/wallet/server/options";
 import { mapTransactionsToRows } from "@/features/wallet/transactions/lib";
-import type {
-  PaymentMethod,
-  TransactionsCategoryOption,
-  TransactionsTagOption,
-} from "@/features/wallet/transactions/types";
+import type { PaymentMethod } from "@/features/wallet/transactions/types";
 import type {
   CategoryDetailBreakdown,
   TagDetailFilters,
@@ -53,24 +49,6 @@ function normalizeDateRange(startDate: string, endDate: string) {
 
 function toPercent(value: number, total: number) {
   return total ? Math.round((value / total) * 10000) / 100 : 0;
-}
-
-function toCategoryOption(category: {
-  _id: { toString(): string };
-  name: string;
-  type: "income" | "expense";
-  color: string;
-  icon?: string | null;
-  isDefault: boolean;
-}): TransactionsCategoryOption {
-  return {
-    id: category._id.toString(),
-    name: category.name,
-    type: category.type,
-    color: category.color,
-    icon: category.icon ?? "circle",
-    isDefault: category.isDefault,
-  };
 }
 
 function toBreakdownList(
@@ -120,10 +98,9 @@ export async function getTagDetailByRange(
     transactionMatch.tagIds = tagObjectId;
   }
 
-  const [categories, tags, selectedTag, transactions, chartTotals] =
+  const [options, selectedTag, transactions, chartTotals] =
     await Promise.all([
-      Category.find({ userId: userObjectId }).sort({ type: 1, name: 1 }).lean(),
-      Tag.find({ userId: userObjectId }).sort({ name: 1 }).lean(),
+      getWalletOptions(userId),
       isUntagged
         ? Promise.resolve(null)
         : Tag.findOne({
@@ -162,11 +139,7 @@ export async function getTagDetailByRange(
     return null;
   }
 
-  const categoryOptions = categories.map(toCategoryOption);
-  const tagOptions: TransactionsTagOption[] = tags.map((tag) => ({
-    id: tag._id.toString(),
-    name: tag.name,
-  }));
+  const { categories: categoryOptions, tags: tagOptions } = options;
   const categoryNameById = new Map(
     categoryOptions.map((category) => [category.id, category.name]),
   );
