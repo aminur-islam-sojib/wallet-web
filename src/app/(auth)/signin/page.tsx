@@ -1,8 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-import { GoogleSignInButton } from "@/components/auth-buttons";
-
 import { authOptions } from "@/lib/auth";
 import Signin4 from "@/components/Auth/auth-form";
 
@@ -14,7 +12,7 @@ export default async function SignInPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-muted/30 px-4">
+    <main className="min-h-screen">
       <Signin4 />
     </main>
   );
