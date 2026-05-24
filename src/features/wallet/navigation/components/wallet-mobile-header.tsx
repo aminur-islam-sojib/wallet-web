@@ -98,7 +98,6 @@ export default function WalletMobileHeader({
   const routeLabel = getRouteLabel(pathname);
   const isWalletHome = pathname === "/wallet";
   const isTransactions = pathname.startsWith("/wallet/transactions");
-  const isWalletRoute = pathname.startsWith("/wallet");
   const initialFilters: TransactionsFiltersType = {
     month: searchParams?.get("month") ?? undefined,
     type: normalizeType(searchParams?.get("type") ?? undefined),
@@ -133,7 +132,7 @@ export default function WalletMobileHeader({
           <p className="text-lg font-semibold text-foreground">Transactions</p>
         ) : (
           <div className="flex items-center gap-3">
-            {isWalletRoute ? <Avatar user={user} /> : null}
+            {accountTrigger}
             <p className="text-lg font-semibold text-foreground">
               {routeLabel}
             </p>
