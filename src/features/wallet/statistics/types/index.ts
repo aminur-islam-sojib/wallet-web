@@ -29,6 +29,29 @@ export type CategoryTotalsResponse = {
   categories: CategoryTotal[];
 };
 
+export type BalanceHistoryPoint = {
+  date: string;
+  label: string;
+  incomePaisa: number;
+  expensePaisa: number;
+  netPaisa: number;
+  balancePaisa: number;
+};
+
+export type BalanceHistoryFilters = {
+  startDate: string;
+  endDate: string;
+};
+
+export type BalanceHistoryResponse = {
+  startDate: string;
+  endDate: string;
+  currentBalancePaisa: number;
+  minBalancePaisa: number;
+  maxBalancePaisa: number;
+  points: BalanceHistoryPoint[];
+};
+
 export type CategoryDetailFilters = CategoryTotalsFilters & {
   categoryId: string;
 };
@@ -58,6 +81,49 @@ export type CategoryDetailResponse = {
     CategoryDetailBreakdown & { id: PaymentMethod | "unspecified" }
   >;
   tagBreakdown: CategoryDetailBreakdown[];
+  transactions: TransactionRow[];
+  categories: TransactionsCategoryOption[];
+  tags: TransactionsTagOption[];
+};
+
+export type TagTotalsFilters = CategoryTotalsFilters;
+
+export type TagTotal = {
+  tagId: string;
+  tagName: string;
+  tagColor: string;
+  totalPaisa: number;
+  percent: number;
+};
+
+export type TagTotalsResponse = {
+  startDate: string;
+  endDate: string;
+  type: TransactionType;
+  totalPaisa: number;
+  tags: TagTotal[];
+};
+
+export type TagDetailFilters = TagTotalsFilters & {
+  tagId: string;
+};
+
+export type TagDetailResponse = {
+  tagId: string;
+  tagName: string;
+  tagColor: string;
+  startDate: string;
+  endDate: string;
+  type: TransactionType;
+  totalPaisa: number;
+  chartTotalPaisa: number;
+  percent: number;
+  transactionCount: number;
+  averagePaisa: number;
+  paymentMethodBreakdown: Array<
+    CategoryDetailBreakdown & { id: PaymentMethod | "unspecified" }
+  >;
+  categoryBreakdown: CategoryDetailBreakdown[];
   transactions: TransactionRow[];
   categories: TransactionsCategoryOption[];
   tags: TransactionsTagOption[];
