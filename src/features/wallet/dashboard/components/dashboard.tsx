@@ -1,5 +1,6 @@
 import { Bell, TrendingDown, TrendingUp } from "lucide-react";
 
+import { WalletHomeAccountTrigger } from "@/features/wallet/dashboard/components/wallet-home-account-trigger";
 import { WalletDashboardBudget } from "@/features/wallet/dashboard/components/wallet-dashboard-budget";
 import { WalletDashboardTransactions } from "@/features/wallet/dashboard/components/wallet-dashboard-transactions";
 import CategoryPieChart from "@/features/wallet/statistics/components/category-pie-chart";
@@ -115,15 +116,7 @@ function WalletHero({
   return (
     <div className="rounded-b-3xl bg-[#17172b] px-5 pb-8 pt-5 text-white shadow-[0_18px_40px_-32px_rgba(23,23,43,0.8)] sm:rounded-2xl sm:px-6 sm:pt-6">
       <div className="mb-5 flex items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <WalletAvatar user={user} />
-          <div className="min-w-0">
-            <p className="text-sm text-white/55">{greeting},</p>
-            <p className="truncate text-base font-medium text-white">
-              {user.name}
-            </p>
-          </div>
-        </div>
+        <WalletHomeAccountTrigger user={user} greeting={greeting} />
 
         <button
           type="button"
@@ -143,24 +136,6 @@ function WalletHero({
       <p className="mt-1 text-xs text-muted-foreground">
         Updated {updatedLabel}
       </p>
-    </div>
-  );
-}
-
-function WalletAvatar({ user }: { user: DashboardProps["user"] }) {
-  if (user.image) {
-    return (
-      <div
-        aria-hidden="true"
-        className="size-11 shrink-0 rounded-full bg-cover bg-center ring-1 ring-white/20"
-        style={{ backgroundImage: `url(${user.image})` }}
-      />
-    );
-  }
-
-  return (
-    <div className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-      {getInitials(user.name)}
     </div>
   );
 }
@@ -200,16 +175,6 @@ function TodayStat({
       </p>
     </article>
   );
-}
-
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  const initials = parts
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join("");
-
-  return initials || "U";
 }
 
 function getGreeting() {
