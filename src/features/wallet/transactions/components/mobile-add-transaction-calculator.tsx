@@ -273,7 +273,7 @@ export default function MobileAddTransactionCalculator({
         <input key={tagId} type="hidden" name="tagIds" value={tagId} />
       ))}
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4">
         <div className="grid min-h-11 grid-cols-2 gap-2">
           {(["expense", "income"] as const).map((item) => (
             <button
@@ -288,7 +288,7 @@ export default function MobileAddTransactionCalculator({
                 type === item &&
                   (item === "expense"
                     ? "bg-(--calc-expense) text-white border-transparent"
-                    : "bg-(--calc-income) text-(--calc-income-text) border-transparent"),
+                    : "bg-(--calc-income) text-white border-transparent"),
               )}
             >
               {item}
@@ -595,14 +595,14 @@ function CalculatorPad({
   ];
 
   return (
-    <section className="grid grid-cols-4 gap-2">
+    <section className="grid grid-cols-4 gap-1">
       {keys.map((key) => (
         <button
           key={key}
           type="button"
           onClick={() => onPress(key)}
           className={cn(
-            "flex min-h-16 items-center justify-center rounded-2xl border text-xl font-semibold transition active:scale-[0.96]",
+            "flex min-h-12 items-center justify-center rounded-2xl border text-xl font-semibold transition active:scale-[0.96]",
             key === "=" &&
               "row-span-2 border-transparent bg-(--calc-accent) text-white text-2xl",
             ["+", "-", "*", "/"].includes(key) &&
@@ -625,13 +625,15 @@ function CalculatorPad({
           )}
         </button>
       ))}
-      <button
-        type="submit"
-        disabled={!canSave}
-        className="col-span-4 flex min-h-16 items-center justify-center rounded-2xl bg-linear-to-br from-(--calc-income) to-(--calc-income-strong) px-4 text-base font-semibold text-(--calc-income-text) transition active:scale-[0.97] disabled:opacity-40"
-      >
-        {isSaving ? "Saving..." : "Save"}
-      </button>
+      <div className="col-span-4 pt-4 flex justify-center items-center w-full">
+        <button
+          type="submit"
+          disabled={!canSave}
+          className="col-span-4 w-full flex min-h-12 items-center text-white justify-center rounded-2xl bg-linear-to-br from-(--calc-income) to-(--calc-income-strong) px-4 text-base font-semibold  transition active:scale-[0.97] disabled:opacity-40"
+        >
+          {isSaving ? "Saving..." : "Save"}
+        </button>
+      </div>
     </section>
   );
 }
