@@ -9,6 +9,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import { formatBDT } from "@/lib/money";
 import type { CategoryTotalsResponse } from "@/features/wallet/statistics/types";
 import { Button } from "@/components/ui/button";
+import { div } from "framer-motion/client";
 
 type Props = {
   data: CategoryTotalsResponse;
@@ -117,14 +118,26 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
   }
 
   return (
-    <div className="rounded-xl border bg-background p-5">
+    <div className="rounded-xl border bg-background p-5 relative">
       <p className="mb-1 text-sm font-medium text-foreground">
         {data.type === "expense" ? "Expenses" : "Income"} by Category
       </p>
       <p className="mb-4 text-xs text-muted-foreground">
         {data.startDate} - {data.endDate}
       </p>
-
+      {onGoDeeper && activeCategory && (
+        <div className="absolute top-20 right-10 z-50">
+          <Button
+            type="button"
+            className="inline-flex min-h-11 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+            onClick={() =>
+              onGoDeeper(activeCategory.categoryId, activeCategory.name)
+            }
+          >
+            Go deeper
+          </Button>
+        </div>
+      )}
       <div className="relative">
         <ChartContainer config={chartConfig} className="mx-auto h-55 w-full">
           <PieChart>
@@ -189,17 +202,6 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
                 <span className="text-xs tabular-nums text-muted-foreground">
                   {formatBDT(activeCategory.value)}
                 </span>
-                {onGoDeeper && (
-                  <Button
-                    type="button"
-                    className="pointer-events-auto absolute top-0 right-0 inline-flex min-h-11 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
-                    onClick={() =>
-                      onGoDeeper(activeCategory.categoryId, activeCategory.name)
-                    }
-                  >
-                    Go deeper
-                  </Button>
-                )}
               </motion.div>
             ) : (
               <motion.div
