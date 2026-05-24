@@ -2,6 +2,7 @@ import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 import { connectToDatabase } from "@/lib/db";
 import { verifyPassword } from "@/lib/passwords";
@@ -106,7 +107,7 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id && !session?.user?.email) {
@@ -126,7 +127,7 @@ export async function getCurrentUser() {
   }
 
   return user;
-}
+});
 
 export async function requireUser() {
   const user = await getCurrentUser();

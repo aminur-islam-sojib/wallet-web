@@ -1,18 +1,15 @@
 import { Types } from "mongoose";
 
-import { Category } from "@/features/wallet/server/models/category";
 import { MonthlyLimit } from "@/features/wallet/server/models/monthly-limit";
-import { Tag } from "@/features/wallet/server/models/tag";
 import { Transaction } from "@/features/wallet/server/models/transaction";
+import { getWalletOptions } from "@/features/wallet/server/options";
 import {
   dateInputValueToUtcRange,
   formatDateInputValueInTimeZone,
 } from "@/lib/date";
 import type {
-  CategoryOption,
   DashboardFilters,
   MonthlyLimit as MonthlyLimitOption,
-  TagOption,
   TodaySummary,
   TransactionRow,
 } from "@/features/wallet/types";
@@ -51,10 +48,7 @@ export async function getDashboardData(
   const { value: selectedMonth, start, end } = getMonthRange(filters.month);
   const { start: todayStart, end: todayEnd } = getTodayRange();
 
-  const [categories, tags] = await Promise.all([
-    Category.find({ userId }).sort({ type: 1, name: 1 }).lean(),
-    Tag.find({ userId }).sort({ name: 1 }).lean(),
-  ]);
+  const { categories, tags } = await getWalletOptions(userId);
 
   const query: Record<string, unknown> = {
     userId,
@@ -101,9 +95,9 @@ export async function getDashboardData(
     ]);
 
   const categoryById = new Map(
-    categories.map((category) => [category._id.toString(), category]),
+    categories.map((category) => [category.id, category]),
   );
-  const tagById = new Map(tags.map((tag) => [tag._id.toString(), tag]));
+  const tagById = new Map(tags.map((tag) => [tag.id, tag]));
   const income =
     monthlyTotals.find((item) => item._id === "income")?.total ?? 0;
   const expense =
@@ -115,22 +109,8 @@ export async function getDashboardData(
 
   return {
     selectedMonth,
-    categories: categories.map(
-      (category): CategoryOption => ({
-        id: category._id.toString(),
-        name: category.name,
-        type: category.type as "income" | "expense",
-        color: category.color,
-        icon: category.icon ?? "circle",
-        isDefault: category.isDefault,
-      }),
-    ),
-    tags: tags.map(
-      (tag): TagOption => ({
-        id: tag._id.toString(),
-        name: tag.name,
-      }),
-    ),
+    categories,
+    tags,
     summary: {
       income,
       expense,

@@ -9,6 +9,8 @@ import { getCategoryDetailByRange } from "@/features/wallet/statistics/server/ca
 import { getCategoryTotalsByRange } from "@/features/wallet/statistics/server/category-totals";
 import { getTagDetailByRange } from "@/features/wallet/statistics/server/tag-detail";
 import { getTagTotalsByRange } from "@/features/wallet/statistics/server/tag-totals";
+import { WalletStatisticsSkeleton } from "@/features/wallet/loading/components/wallet-loading-skeletons";
+import { Suspense } from "react";
 
 const WALLET_TIME_ZONE = "Asia/Dhaka";
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -55,11 +57,18 @@ function getStatisticsRange(params: Record<string, string | string[] | undefined
   return fallbackRange;
 }
 
-export default async function WalletStaisticsPage({
+export default function WalletStaisticsPage({
   searchParams,
 }: WalletStatisticsPageProps) {
-  const user = await requireUser();
-  const params = await searchParams;
+  return (
+    <Suspense fallback={<WalletStatisticsSkeleton />}>
+      <StatisticsPageData searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function StatisticsPageData({ searchParams }: WalletStatisticsPageProps) {
+  const [user, params] = await Promise.all([requireUser(), searchParams]);
   const selectedCategoryId = firstParam(params.categoryId);
   const selectedTagId = selectedCategoryId
     ? undefined

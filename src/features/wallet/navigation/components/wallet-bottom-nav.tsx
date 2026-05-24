@@ -7,11 +7,7 @@ import { Home, List, PieChart, MoreHorizontal, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BottomDrawer from "@/features/wallet/transactions/components/bottom-drawer";
 
-import type {
-  CategoryOption,
-  MonthlyLimit,
-  TagOption,
-} from "@/features/wallet/types";
+import type { CategoryOption, TagOption } from "@/features/wallet/types";
 import { WALLET_NAV_ITEMS } from "@/features/wallet/navigation/lib/wallet-nav";
 
 const navItems = [
@@ -22,8 +18,6 @@ const navItems = [
 ];
 
 type WalletBottomNavProps = {
-  selectedMonth: string;
-  monthlyLimit: MonthlyLimit | null;
   incomeCategories: CategoryOption[];
   expenseCategories: CategoryOption[];
   tags: TagOption[];
