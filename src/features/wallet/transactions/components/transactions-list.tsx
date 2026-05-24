@@ -55,7 +55,7 @@ function TransactionCard({
   const categoryColor =
     category?.color ?? transaction.categoryColor ?? "#64748b";
   const categoryIcon = category?.icon ?? "circle";
-  console.log(transaction);
+
   return (
     <article className="relative flex cursor-pointer items-center gap-3 border-b border-border bg-background px-4 py-3 transition-colors active:bg-muted/40">
       {/* Category icon circle */}
@@ -93,7 +93,7 @@ function TransactionCard({
 
         <div className="mt-0.5 flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
-            {transaction.paymentMethod ?? "Cash"} · {transaction.categoryName}
+            {transaction.paymentMethod ?? "Cash"} - {transaction.categoryName}
           </p>
           <p className="text-muted-foreground text-right">
             {formatTransactionDate(transaction.date)}
@@ -102,7 +102,7 @@ function TransactionCard({
         <div>
           {note ? (
             <div className="truncate text-xs text-muted-foreground">
-              <i>"{note}"</i>
+              <i>&quot;{note}&quot;</i>
             </div>
           ) : (
             ""

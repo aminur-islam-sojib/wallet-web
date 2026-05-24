@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChartContainer } from "@/components/ui/chart";
 import { formatBDT } from "@/lib/money";
 import type { CategoryTotalsResponse } from "@/features/wallet/statistics/types";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   data: CategoryTotalsResponse;
@@ -121,7 +122,7 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
         {data.type === "expense" ? "Expenses" : "Income"} by Category
       </p>
       <p className="mb-4 text-xs text-muted-foreground">
-        {data.startDate} — {data.endDate}
+        {data.startDate} - {data.endDate}
       </p>
 
       <div className="relative">
@@ -142,7 +143,6 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
               animationEasing="ease-out"
               shape={renderPieShape}
               onMouseEnter={(_, index) => setActiveIndex(index)}
-              onMouseLeave={() => setActiveIndex(null)}
               onClick={(_, index) =>
                 setActiveIndex(activeIndex === index ? null : index)
               }
@@ -190,14 +190,15 @@ export default function CategoryPieChart({ data, onGoDeeper }: Props) {
                   {formatBDT(activeCategory.value)}
                 </span>
                 {onGoDeeper && (
-                  <button
-                    className="pointer-events-auto mt-2 rounded-full border border-border bg-background px-2.5 py-0.5 text-[10px] font-medium text-foreground transition-colors hover:bg-muted"
+                  <Button
+                    type="button"
+                    className="pointer-events-auto absolute top-0 right-0 inline-flex min-h-11 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
                     onClick={() =>
                       onGoDeeper(activeCategory.categoryId, activeCategory.name)
                     }
                   >
-                    Go deeper →
-                  </button>
+                    Go deeper
+                  </Button>
                 )}
               </motion.div>
             ) : (
