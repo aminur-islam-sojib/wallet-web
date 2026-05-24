@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Cell, Pie, PieChart, Sector } from "recharts";
 import type { PieSectorShapeProps } from "recharts";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,6 +26,8 @@ type Props = {
   emptyText?: string;
   itemLabel: string;
   onGoDeeper?: (id: string, name: string) => void;
+  actionHref?: string;
+  actionLabel?: string;
 };
 
 function AnimatedActiveShape(props: PieSectorShapeProps) {
@@ -88,6 +91,8 @@ export default function StatisticsPieChart({
   emptyText = "No data for this range",
   itemLabel,
   onGoDeeper,
+  actionHref,
+  actionLabel = "See more",
 }: Props) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
@@ -116,7 +121,17 @@ export default function StatisticsPieChart({
 
   return (
     <div className="relative rounded-xl border bg-background p-5">
-      <p className="mb-1 text-sm font-medium text-foreground">{title}</p>
+      <div className="mb-1 flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-foreground">{title}</p>
+        {actionHref ? (
+          <Link
+            href={actionHref}
+            className="flex min-h-11 shrink-0 items-center px-1 text-sm font-medium text-primary"
+          >
+            {actionLabel}
+          </Link>
+        ) : null}
+      </div>
       <p className="mb-4 text-xs text-muted-foreground">
         {startDate} - {endDate}
       </p>

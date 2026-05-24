@@ -25,7 +25,7 @@ const SuccessModalView: React.FC = () => {
         <Button
           onClick={() => setIsAchievementOpen(true)}
           variant="default"
-          className="bg-purple-500 hover:bg-purple-600"
+          className="bg-primary hover:bg-primary/90"
         >
           Achievement Unlocked
         </Button>
@@ -203,7 +203,7 @@ const SuccessModalView: React.FC = () => {
             <div className="mt-3">
               <div className="bg-purple-200 dark:bg-purple-800 rounded-full h-2">
                 <div
-                  className="bg-purple-500 h-2 rounded-full"
+                  className="h-2 rounded-full bg-primary"
                   style={{ width: "25%" }}
                 ></div>
               </div>
@@ -214,7 +214,7 @@ const SuccessModalView: React.FC = () => {
             <Button
               onClick={() => setIsAchievementOpen(false)}
               variant="default"
-              className="bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transform hover:scale-105"
+              className="transform bg-primary hover:scale-105 hover:bg-primary/90"
               size="lg"
             >
               Awesome!

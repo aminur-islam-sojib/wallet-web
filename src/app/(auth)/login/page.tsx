@@ -153,7 +153,7 @@ export default function Login() {
                 }
                 disabled={!provider.enabled}
                 aria-disabled={!provider.enabled}
-                className="flex w-full items-center justify-center h-9 px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex min-h-11 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-3 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-800 dark:bg-black dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
               >
                 {provider.icon}
               </button>
@@ -228,7 +228,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isPending}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-zinc-50 shadow hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-9 px-4 py-2 w-full"
+              className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             >
               {isPending ? "Signing in..." : "Sign In"}
             </button>
@@ -240,14 +240,14 @@ export default function Login() {
               Don&apos;t have an account?{" "}
               <a
                 href="/signin"
-                className="font-medium text-zinc-900 dark:text-zinc-50 underline underline-offset-4 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                className="font-medium text-primary underline underline-offset-4 transition-colors hover:text-primary/80"
               >
                 Sign up
               </a>
             </p>
             <a
               href="#"
-              className="text-sm font-medium text-zinc-900 dark:text-zinc-50 underline underline-offset-4 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+              className="text-sm font-medium text-primary underline underline-offset-4 transition-colors hover:text-primary/80"
             >
               Forgot your password?
             </a>

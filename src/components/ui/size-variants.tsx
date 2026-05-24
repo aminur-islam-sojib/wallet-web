@@ -26,14 +26,14 @@ const SizeVariantsView: React.FC = () => {
         <Button
           onClick={() => setIsLargeOpen(true)}
           variant="default"
-          className="bg-purple-500 hover:bg-purple-600"
+          className="bg-primary hover:bg-primary/90"
         >
           Large Modal
         </Button>
         <Button
           onClick={() => setIsXLOpen(true)}
           variant="default"
-          className="bg-indigo-500 hover:bg-indigo-600"
+          className="bg-primary hover:bg-primary/90"
         >
           Extra Large Modal
         </Button>
@@ -133,7 +133,7 @@ const SizeVariantsView: React.FC = () => {
             <Button
               onClick={() => setIsLargeOpen(false)}
               variant="default"
-              className="bg-purple-500 hover:bg-purple-600"
+              className="bg-primary hover:bg-primary/90"
             >
               Close
             </Button>
@@ -173,7 +173,7 @@ const SizeVariantsView: React.FC = () => {
             <Button
               onClick={() => setIsXLOpen(false)}
               variant="default"
-              className="bg-indigo-500 hover:bg-indigo-600"
+              className="bg-primary hover:bg-primary/90"
             >
               Close
             </Button>

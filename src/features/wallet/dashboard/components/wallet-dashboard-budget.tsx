@@ -38,7 +38,7 @@ export function WalletDashboardBudget({
   const isOverLimit = remaining !== null && remaining < 0;
 
   return (
-    <section>
+    <section className="mb-5">
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="text-sm font-medium text-foreground">Monthly budget</h2>
         <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export function WalletDashboardBudget({
           <button
             type="button"
             onClick={() => setDialogOpen(true)}
-            className="min-h-11 rounded-lg px-3 text-sm font-medium text-[#534ab7] hover:bg-muted"
+            className="min-h-11 rounded-lg px-3 text-sm font-medium text-primary hover:bg-muted"
           >
             {monthlyLimit ? "Edit" : "Set"}
           </button>
@@ -61,7 +61,7 @@ export function WalletDashboardBudget({
         <article className="rounded-xl border border-border/70 bg-background p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#eeedfe] text-[#534ab7]">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
                 <Gauge className="size-5" />
               </span>
               <div className="min-w-0">
@@ -77,7 +77,7 @@ export function WalletDashboardBudget({
               className={
                 isOverLimit
                   ? "rounded-md bg-[#fcebeb] px-2 py-1 text-xs font-medium text-[#a32d2d]"
-                  : "rounded-md bg-[#eeedfe] px-2 py-1 text-xs font-medium text-[#534ab7]"
+                  : "rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
               }
             >
               {budgetPercent}% used
@@ -89,7 +89,7 @@ export function WalletDashboardBudget({
               className={
                 isOverLimit
                   ? "h-full rounded-full bg-[#a32d2d]"
-                  : "h-full rounded-full bg-[#534ab7]"
+                  : "h-full rounded-full bg-primary"
               }
               style={{ width: barWidth }}
             />
@@ -109,13 +109,13 @@ export function WalletDashboardBudget({
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="flex min-h-20 w-full items-center gap-3 rounded-xl border border-dashed border-border bg-background p-4 text-left shadow-sm hover:border-[#534ab7]/40"
+          className="flex min-h-20 w-full items-center gap-3 rounded-xl border border-dashed border-border bg-background p-4 text-left shadow-sm hover:border-primary/40"
         >
-          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-[#eeedfe] text-[#534ab7]">
+          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
             <Plus className="size-5" />
           </span>
           <div className="min-w-0">
-            <h3 className="text-sm font-medium text-[#534ab7]">
+            <h3 className="text-sm font-medium text-primary">
               Set a monthly budget
             </h3>
             <p className="text-xs text-muted-foreground">

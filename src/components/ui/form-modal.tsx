@@ -24,7 +24,7 @@ const FormModalView: React.FC = () => {
         <Button
           onClick={() => setIsSettingsOpen(true)}
           variant="default"
-          className="bg-purple-500 hover:bg-purple-600"
+          className="bg-primary hover:bg-primary/90"
         >
           Settings Form Modal
         </Button>

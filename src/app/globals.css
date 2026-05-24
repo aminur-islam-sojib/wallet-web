@@ -60,7 +60,7 @@
   --popover-foreground: #0f172a;
 
   /* ── Primary = accent ── */
-  --primary: #5b5df7; /* --calc-accent */
+  --primary: #534ab7; /* app primary */
   --primary-foreground: #ffffff;
 
   /* ── Secondary = surface-2 ── */
@@ -83,10 +83,10 @@
   --input: #cfd6e4; /* --calc-border-strong */
 
   /* ── Ring = accent glow ── */
-  --ring: rgba(91, 93, 247, 0.12); /* --calc-accent-glow */
+  --ring: rgba(83, 74, 183, 0.14); /* primary glow */
 
   /* ── Charts ── */
-  --chart-1: #5b5df7; /* accent — primary series */
+  --chart-1: #534ab7; /* primary series */
   --chart-2: #16a34a; /* income */
   --chart-3: #f59e0b; /* warning */
   --chart-4: #e5484d; /* expense */
@@ -97,12 +97,12 @@
   /* ── Sidebar ── */
   --sidebar: #ffffff; /* --calc-surface */
   --sidebar-foreground: #0f172a;
-  --sidebar-primary: #5b5df7; /* --calc-accent */
+  --sidebar-primary: #534ab7; /* app primary */
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f0f2f7; /* --calc-surface-2 */
   --sidebar-accent-foreground: #0f172a;
   --sidebar-border: #e1e6f0; /* --calc-border */
-  --sidebar-ring: rgba(91, 93, 247, 0.12);
+  --sidebar-ring: rgba(83, 74, 183, 0.14);
 }
 
 .dark {
@@ -117,7 +117,7 @@
   --popover-foreground: #f0f0f4;
 
   /* ── Primary = accent ── */
-  --primary: #6c63ff; /* --calc-accent */
+  --primary: #534ab7; /* app primary */
   --primary-foreground: #ffffff;
 
   /* ── Secondary = surface-2 ── */
@@ -140,10 +140,10 @@
   --input: #3a3b46; /* --calc-border-strong */
 
   /* ── Ring = accent glow ── */
-  --ring: rgba(108, 99, 255, 0.08); /* --calc-accent-glow */
+  --ring: rgba(83, 74, 183, 0.16); /* primary glow */
 
   /* ── Charts ── */
-  --chart-1: #6c63ff; /* accent */
+  --chart-1: #534ab7; /* primary */
   --chart-2: #39d98a; /* income */
   --chart-3: #ff9f43; /* warning */
   --chart-4: #ff6b6b; /* expense */
@@ -152,12 +152,12 @@
   /* ── Sidebar ── */
   --sidebar: #17181c; /* --calc-surface */
   --sidebar-foreground: #f0f0f4;
-  --sidebar-primary: #6c63ff; /* --calc-accent */
+  --sidebar-primary: #534ab7; /* app primary */
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #1f2026; /* --calc-surface-2 */
   --sidebar-accent-foreground: #f0f0f4;
   --sidebar-border: #2e2f38; /* --calc-border */
-  --sidebar-ring: rgba(108, 99, 255, 0.08);
+  --sidebar-ring: rgba(83, 74, 183, 0.16);
 }
 
 @layer base {
@@ -166,6 +166,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  a {
+    @apply text-primary;
   }
   html {
     @apply font-sans;
