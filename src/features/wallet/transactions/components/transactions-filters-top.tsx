@@ -190,7 +190,7 @@ export default function TransactionsFilters({
                 onClick={applyFilters}
                 className="min-h-11 rounded-lg bg-foreground text-sm font-semibold text-background"
               >
-                Apply koren
+                Apply
               </button>
               <button
                 type="button"
