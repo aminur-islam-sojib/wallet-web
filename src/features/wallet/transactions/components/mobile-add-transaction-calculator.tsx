@@ -365,11 +365,13 @@ export default function MobileAddTransactionCalculator({
           </div>
         </section>
 
-        <CalculatorPad
-          canSave={canSave && !isSaving}
-          isSaving={isSaving}
-          onPress={press}
-        />
+        <div className="flex-1 min-h-0 flex flex-col">
+          <CalculatorPad
+            canSave={canSave && !isSaving}
+            isSaving={isSaving}
+            onPress={press}
+          />
+        </div>
 
         {detailPills.length ? (
           <div className="flex flex-wrap gap-2">
@@ -595,45 +597,48 @@ function CalculatorPad({
   ];
 
   return (
-    <section className="grid grid-cols-4 gap-1">
-      {keys.map((key) => (
-        <button
-          key={key}
-          type="button"
-          onClick={() => onPress(key)}
-          className={cn(
-            "flex min-h-12 items-center justify-center rounded-2xl border text-xl font-semibold transition active:scale-[0.96]",
-            key === "=" &&
-              "row-span-2 border-transparent bg-(--calc-accent) text-white text-2xl",
-            ["+", "-", "*", "/"].includes(key) &&
-              "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-accent-2)",
-            key === "clear" &&
-              "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-warning)",
-            key === "backspace" &&
-              "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-muted)",
-            !["+", "-", "*", "/", "clear", "backspace", "="].includes(key) &&
-              "border-(--calc-border) bg-(--calc-surface-2)",
-          )}
-          aria-label={calculatorLabel(key)}
-        >
-          {key === "backspace" ? (
-            <ChevronRight className="size-5 rotate-180" />
-          ) : key === "clear" ? (
-            <Eraser className="size-5" />
-          ) : (
-            displayKey(key)
-          )}
-        </button>
-      ))}
-      <div className="col-span-4 pt-4 flex justify-center items-center w-full">
-        <button
-          type="submit"
-          disabled={!canSave}
-          className="col-span-4 w-full flex min-h-12 items-center text-white justify-center rounded-2xl bg-linear-to-br from-(--calc-income) to-(--calc-income-strong) px-4 text-base font-semibold  transition active:scale-[0.97] disabled:opacity-40"
-        >
-          {isSaving ? "Saving..." : "Save"}
-        </button>
+    <section className="flex flex-col flex-1 min-h-0 gap-1">
+      <div className="grid grid-cols-4 grid-rows-5 flex-1 min-h-0 gap-1">
+        {keys.map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onPress(key)}
+            className={cn(
+              "flex h-full w-full max-h-20 items-center justify-center rounded-xl border text-xl font-semibold transition active:scale-[0.96]",
+              key === "=" &&
+                "row-start-4 col-start-4 min-h-20 row-span-2 border-transparent bg-(--calc-accent) text-white text-2xl",
+              key === "0" && "col-span-2",
+              ["+", "-", "*", "/"].includes(key) &&
+                "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-accent-2)",
+              key === "clear" &&
+                "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-warning)",
+              key === "backspace" &&
+                "border-(--calc-border) bg-(--calc-surface-3) text-(--calc-muted)",
+              // Change this:
+              !["+", "-", "*", "/", "clear", "backspace", "="].includes(key) &&
+                "border-(--calc-border) bg-(--calc-surface-2)",
+            )}
+            aria-label={calculatorLabel(key)}
+          >
+            {key === "backspace" ? (
+              <ChevronRight className="size-5 rotate-180" />
+            ) : key === "clear" ? (
+              <Eraser className="size-5" />
+            ) : (
+              displayKey(key)
+            )}
+          </button>
+        ))}
       </div>
+
+      <button
+        type="submit"
+        disabled={!canSave}
+        className="w-full min-h-11 flex items-center text-white justify-center rounded-xl bg-linear-to-br from-(--calc-income) to-(--calc-income-strong) px-4 text-base font-semibold transition active:scale-[0.97] disabled:opacity-40"
+      >
+        {isSaving ? "Saving..." : "Save"}
+      </button>
     </section>
   );
 }
